@@ -1,4 +1,6 @@
 # Gemnasium gem
+[![Dependency Status](https://gemnasium.com/gemnasium/gemnasium-gem.png)](https://gemnasium.com/gemnasium/gemnasium-gem)
+[![Build Status](https://travis-ci.org/gemnasium/gemnasium-gem.png?branch=master)](https://travis-ci.org/gemnasium/gemnasium-gem)
 
 This gem lets you push your dependency files to [Gemnasium](https://gemnasium.com/) to track your project's dependencies and get notified about updates and security advisories.
 
