@@ -1,1 +1,1 @@
-rvm ruby-1.9.3-p327@gemnasium-gem --create
+rvm ruby-2.0.0-p0@gemnasium-gem --create
