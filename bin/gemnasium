@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+#Adjust path in case called directly and not through gem
+$:.unshift "#{File.expand_path(File.dirname(__FILE__))}/../lib"
+
+require 'gemnasium'
+require 'gemnasium/options'
+require 'gemnasium/version'
+
+#Parse options
+begin
+  options, parser = Gemnasium::Options.parse ARGV
+rescue OptionParser::ParseError => e
+  $stderr.puts e.message.capitalize
+  $stderr.puts "Please see `gemnasium --help` for valid options"
+  abort
+end
+
+if options[:show_help]
+  puts parser
+  exit
+elsif options[:show_version]
+  puts "gemnasium v#{Gemnasium::VERSION}"
+  exit
+end
+
+# Set project path
+options[:project_path] = File.expand_path(".")
+
+case options[:command]
+when 'create'
+  Gemnasium.create_project options
+when 'install'
+  Gemnasium.install options
+when 'push'
+  Gemnasium.push options
+else
+  $stdout.puts "Please see `gemnasium --help` for valid options"
+  exit
+end
