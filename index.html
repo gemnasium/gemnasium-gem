@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Gemnasium-gem by gemnasium</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Gemnasium-gem</h1>
+        <p>Keep your project in shape! More info: https://gemnasium.com</p>
+
+        <p class="view"><a href="https://github.com/gemnasium/gemnasium-gem">View the Project on GitHub <small>gemnasium/gemnasium-gem</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/gemnasium/gemnasium-gem/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/gemnasium/gemnasium-gem/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/gemnasium/gemnasium-gem">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Gemnasium gem</h1>
+
+<p><a href="https://gemnasium.com/gemnasium/gemnasium-gem"><img src="https://gemnasium.com/gemnasium/gemnasium-gem.png" alt="Dependency Status"></a>
+<a href="https://travis-ci.org/gemnasium/gemnasium-gem"><img src="https://travis-ci.org/gemnasium/gemnasium-gem.png?branch=master" alt="Build Status"></a></p>
+
+<p>This gem lets you push your dependency files to <a href="https://gemnasium.com/">Gemnasium</a> to track your project's dependencies and get notified about updates and security advisories.</p>
+
+<p>Gemnasium app offers Github integration with fully automated synchronization but you can use this gem if you don't want to authorize access to your repositories (ie: for privacy concern).</p>
+
+<p>Supported dependency files are:</p>
+
+<ul>
+<li>Gemfile</li>
+<li>Gemfile.lock</li>
+<li>*.gemspec</li>
+<li>package.json</li>
+<li>npm-shrinkwrap.json</li>
+</ul><h2>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<pre><code>gem 'gemnasium'
+</code></pre>
+
+<p>Or in your terminal:</p>
+
+<pre><code>$ gem install gemnasium
+</code></pre>
+
+<p>Add configuration file in your project</p>
+
+<pre><code>$ gemnasium install
+</code></pre>
+
+<p>Install command supports 2 options : <code>--rake</code> and <code>--git</code> to respectively install the gemnasium <a href="#2-via-the-rake-task">rake task</a> and a <a href="#3-via-the-post-commit-git-hook">post-commit git hook</a>.</p>
+
+<p><code>gemnasium install</code> will add the config/gemnasium.yml file to your .gitignore so your private API key won't be committed. If you use another versionning system, please remember to ignore this file, especially for public project. </p>
+
+<p><strong>Warning: your api key is dedicated to your own user account and must not be published!</strong></p>
+
+<p>Fill the values of the new config/gemnasium.yml file.</p>
+
+<h2>Usage</h2>
+
+<p>There is multiple ways to use the gemnasium gem. You can choose whichever you prefer.</p>
+
+<h3>1. Via the command line</h3>
+
+<p>Using gemnasium from the command line is as simple as typing <code>gemnasium [command]</code> :</p>
+
+<p><strong>To create a project on Gemnasium:</strong></p>
+
+<pre><code>$ gemnasium create
+</code></pre>
+
+<p>Create command will look for data in your config/gemnasium.yml configuration file to create a project.
+If your project was previously managed automatically from Github or if you want to change the visibility of an existing project, you can use the <code>--force</code> option to overwrite existing setup.</p>
+
+<p>Please note that automatic Github synchronization will be dropped once project is configured with this gem.</p>
+
+<p><strong>To push your dependency files on Gemnasium:</strong></p>
+
+<pre><code>$ gemnasium push
+</code></pre>
+
+<h3>2. Via the rake task</h3>
+
+<p>Gemnasium gem comes with a rake task ready to be used. To use it, you need to install it via: <code>gemnasium install --rake</code>
+Once installed, you'll have access to 2 tasks:</p>
+
+<p><strong>To create a project on Gemnasium:</strong></p>
+
+<pre><code>$ rake gemnasium:create
+</code></pre>
+
+<p>Create command will look for data in your config/gemnasium.yml configuration file to create a project.
+If your project was previously managed automatically from Github or if you want to change the visibility of an existing project, you can use the <code>gemnasium:create:force</code> subtask to overwrite existing setup.</p>
+
+<p>Please note that automatic Github synchronization will be dropped once project is configured with this gem.</p>
+
+<p><strong>To push your dependency files on Gemnasium:</strong></p>
+
+<pre><code>$ rake gemnasium:push
+</code></pre>
+
+<h3>3. Via the post-commit git hook</h3>
+
+<p>We wrote for you a ready-to-use <a href="lib/templates/post-commit">post-commit git hook</a>.</p>
+
+<p>Once installed via <code>gemnasium install --git</code>, the gem will push your dependency files after each commit only if they have changed.</p>
+
+<h3>4. Directly in your code</h3>
+
+<p>If you need to use Gemnasium gem right into your code, you can do so just like below:</p>
+
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">'gemnasium'</span>
+
+
+<span class="c1"># To install gemnasium files</span>
+<span class="c1">#</span>
+<span class="c1"># options is a Hash which can contain the following keys:</span>
+<span class="c1">#   project_path (required) - [String] path to the project</span>
+<span class="c1">#   install_rake_task       - [Boolean] whether or not to install the rake task</span>
+<span class="c1">#   install_git_hook        - [Boolean] whether or not to install the git hook</span>
+<span class="no">Gemnasium</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+
+<span class="c1"># To create your project on gemnasium</span>
+<span class="c1">#</span>
+<span class="c1"># options is a Hash which can contain the following keys:</span>
+<span class="c1">#   project_path (required) - [String] path to the project</span>
+<span class="c1">#   overwrite_attr          - [Boolean] whether or not to overwrite existing project's attributes</span>
+<span class="no">Gemnasium</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+
+<span class="c1"># To push supported dependency files to gemnasium</span>
+<span class="c1">#</span>
+<span class="c1"># options is a Hash which can contain the following keys:</span>
+<span class="c1">#   project_path (required) - [String] path to the project</span>
+<span class="no">Gemnasium</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+</pre></div>
+
+<h2>Sample config</h2>
+
+<p>Here is a sample config file for our public project <strong>tech-angels/vandamme</strong> available at <a href="https://gemnasium.com/tech-angels/vandamme">https://gemnasium.com/tech-angels/vandamme</a></p>
+
+<div class="highlight"><pre><span class="l-Scalar-Plain">api_key</span><span class="p-Indicator">:</span> <span class="s">"some_secret_api_key"</span>
+<span class="l-Scalar-Plain">profile_name</span><span class="p-Indicator">:</span> <span class="s">"tech-angels"</span>
+<span class="l-Scalar-Plain">project_name</span><span class="p-Indicator">:</span> <span class="s">"vandamme"</span>   
+<span class="l-Scalar-Plain">project_visibility</span><span class="p-Indicator">:</span> <span class="s">"public"</span>
+<span class="l-Scalar-Plain">project_branch</span><span class="p-Indicator">:</span> <span class="s">"master"</span>
+</pre></div>
+
+<h2>Troubleshooting</h2>
+
+<p>Gemnasium will try to display the most accurate error message when something goes wrong. </p>
+
+<p>Though, if you're stil stuck with something, feel free to contact <a href="https://gemnasium.freshdesk.com">Gemnasium support</a>.</p>
+
+<h2>Contributing</h2>
+
+<ol>
+<li>Fork the project.</li>
+<li>Make your feature or bug fix.</li>
+<li>Test it.</li>
+<li>Commit.</li>
+<li>Create new pull request.</li>
+</ol><h2>Credits</h2>
+
+<p><a href="http://www.tech-angels.com"><img src="http://media.tumblr.com/tumblr_m5ay3bQiER1qa44ov.png" alt="Tech-Angels"></a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/gemnasium">gemnasium</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-22855718-3");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
