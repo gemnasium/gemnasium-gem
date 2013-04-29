@@ -49,7 +49,7 @@ __To create a project on Gemnasium:__
     $ gemnasium create
 
 Create command will look for data in your config/gemnasium.yml configuration file to create a project.
-If your project was previously managed automatically from Github or if you want to change the visibility of an existing project, you can use the `--force` option to overwrite existing setup.
+If your project was previously managed automatically from Github you can use the `--force` option to overwrite existing setup.
 
 Please note that automatic Github synchronization will be dropped once project is configured with this gem.
 
@@ -67,7 +67,7 @@ __To create a project on Gemnasium:__
     $ rake gemnasium:create
 
 Create command will look for data in your config/gemnasium.yml configuration file to create a project.
-If your project was previously managed automatically from Github or if you want to change the visibility of an existing project, you can use the `gemnasium:create:force` subtask to overwrite existing setup.
+If your project was previously managed automatically from Github you can use the `gemnasium:create:force` subtask to overwrite existing setup.
 
 Please note that automatic Github synchronization will be dropped once project is configured with this gem.
 
@@ -113,13 +113,12 @@ Gemnasium.push(options)
 
 ## Sample config
 
-Here is a sample config file for our public project **tech-angels/vandamme** available at https://gemnasium.com/tech-angels/vandamme
+Here is a sample config file:
 
 ```yaml
 api_key: "some_secret_api_key"
 profile_name: "tech-angels"
 project_name: "vandamme"   
-project_visibility: "public"
 project_branch: "master"
 ```
 

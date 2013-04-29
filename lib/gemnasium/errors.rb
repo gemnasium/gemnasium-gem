@@ -16,4 +16,5 @@ module Gemnasium
   class ProjectAlreadyExistsError < StandardError; end
   class ProjectGithubSyncedError < StandardError; end
   class ProjectBranchMismatchError < StandardError; end
+  class ProjectIsPublicError < StandardError; end
 end

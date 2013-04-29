@@ -78,7 +78,7 @@ describe Gemnasium do
           end
 
           it 'makes a request to Gemnasium to get updated files to upload' do
-            expect(WebMock).to have_requested(:post, api_url('/api/v1/profiles/tech-angels/projects/gemnasium-gem/dependency_files/compare'))
+            expect(WebMock).to have_requested(:post, api_url('/api/v2/profiles/tech-angels/projects/gemnasium-gem/dependency_files/compare'))
                     .with(:body => sha1_hash.to_json,
                           :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
           end
@@ -92,7 +92,7 @@ describe Gemnasium do
           end
 
           it 'makes a request to Gemnasium to upload needed files' do
-            expect(WebMock).to have_requested(:post, api_url('/api/v1/profiles/tech-angels/projects/gemnasium-gem/dependency_files/upload'))
+            expect(WebMock).to have_requested(:post, api_url('/api/v2/profiles/tech-angels/projects/gemnasium-gem/dependency_files/upload'))
                     .with(:body => hash_to_upload.to_json,
                           :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
           end
@@ -134,13 +134,13 @@ describe Gemnasium do
         before { Gemnasium.create_project({ project_path: project_path, overwrite_attr: true }) }
 
         it 'issues the correct request' do
-          expect(WebMock).to have_requested(:post, api_url("/api/v1/profiles/tech-angels/projects"))
-              .with(:body => {name: "existing_project", privacy: "private", branch: "master", overwrite_attributes: true},
+          expect(WebMock).to have_requested(:post, api_url("/api/v2/profiles/tech-angels/projects"))
+              .with(:body => {name: "existing_project", branch: "master", overwrite_attributes: true},
                     :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
         end
 
         it 'displays a confirmation message' do
-          expect(output).to include 'Private project `existing_project` successfully created for tech-angels.'
+          expect(output).to include 'Project `existing_project` successfully created for tech-angels.'
           expect(output).to include 'Remaining private slots for this profile: 9001'
         end
       end
@@ -150,13 +150,13 @@ describe Gemnasium do
       before { Gemnasium.create_project({ project_path: project_path }) }
 
       it 'issues the correct request' do
-        expect(WebMock).to have_requested(:post, api_url("/api/v1/profiles/tech-angels/projects"))
-            .with(:body => {name: "gemnasium-gem", privacy: "private", branch: "master"},
+        expect(WebMock).to have_requested(:post, api_url("/api/v2/profiles/tech-angels/projects"))
+            .with(:body => {name: "gemnasium-gem", branch: "master"},
                   :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
       end
 
       it 'displays a confirmation message' do
-        expect(output).to include 'Private project `gemnasium-gemn` successfully created for tech-angels.'
+        expect(output).to include 'Project `gemnasium-gemn` successfully created for tech-angels.'
         expect(output).to include 'Remaining private slots for this profile: 9001'
       end
     end
