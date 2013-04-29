@@ -5,8 +5,7 @@ describe Gemnasium::Configuration do
   describe 'default config' do
     it { expect(Gemnasium::Configuration::DEFAULT_CONFIG[:site]).to eql 'gemnasium.com' }
     it { expect(Gemnasium::Configuration::DEFAULT_CONFIG[:use_ssl]).to eql true }
-    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG[:api_version]).to eql 'v1' }
-    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG[:project_visibility]).to eql 'public' }
+    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG[:api_version]).to eql 'v2' }
   end
 
   describe 'initialize' do
@@ -43,7 +42,6 @@ describe Gemnasium::Configuration do
         it { expect(config.site).to eql Gemnasium::Configuration::DEFAULT_CONFIG[:site] }
         it { expect(config.use_ssl).to eql Gemnasium::Configuration::DEFAULT_CONFIG[:use_ssl] }
         it { expect(config.api_version).to eql Gemnasium::Configuration::DEFAULT_CONFIG[:api_version] }
-        it { expect(config.project_visibility).to eql Gemnasium::Configuration::DEFAULT_CONFIG[:project_visibility] }
       end
     end
   end

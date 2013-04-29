@@ -2,11 +2,10 @@ require 'yaml'
 
 module Gemnasium
   class Configuration
-    attr_accessor :site, :api_key, :use_ssl, :profile_name, :project_name, :project_visibility, :api_version, :project_branch
+    attr_accessor :site, :api_key, :use_ssl, :profile_name, :project_name, :api_version, :project_branch
     DEFAULT_CONFIG = { site: 'gemnasium.com',
                        use_ssl: true,
-                       api_version: 'v1',
-                       project_visibility: 'public' }
+                       api_version: 'v2' }
 
     # Initialize the configuration object from a YAML file
     #
@@ -35,11 +34,9 @@ module Gemnasium
       api_version_option_valid        = !api_version.nil? && !api_version.empty?
       profile_name_option_valid       = !profile_name.nil? && !profile_name.empty?
       project_name_option_valid       = !project_name.nil? && !project_name.empty?
-      project_visibility_option_valid = !project_visibility.nil? && !project_visibility.empty? &&
-                                        (project_visibility == 'public' || project_visibility == 'private')
 
       site_option_valid && api_key_option_valid && use_ssl_option_valid && api_version_option_valid &&
-      profile_name_option_valid && project_name_option_valid && project_visibility_option_valid
+      profile_name_option_valid && project_name_option_valid
     end
   end
 end

@@ -10,10 +10,9 @@ def stub_config(options = {})
   stubbed_config.stub(:site).and_return('gemnasium.com')
   stubbed_config.stub(:use_ssl).and_return(true)
   stubbed_config.stub(:api_key).and_return('test_api_key')
-  stubbed_config.stub(:api_version).and_return('v1')
+  stubbed_config.stub(:api_version).and_return('v2')
   stubbed_config.stub(:profile_name).and_return('tech-angels')
   stubbed_config.stub(:project_name).and_return(options[:project_name] || 'gemnasium-gem')
-  stubbed_config.stub(:project_visibility).and_return('private')
   stubbed_config.stub(:project_branch).and_return('master')
 
   Gemnasium.stub(:config).and_return(stubbed_config)
@@ -42,13 +41,13 @@ def stub_requests
                       :headers => {})
   # Create requests
   stub_request(:post, api_url("/api/#{config.api_version}/profiles/#{config.profile_name}/projects"))
-          .with(:body => '{"name":"gemnasium-gem","privacy":"private","branch":"master"}',
+          .with(:body => '{"name":"gemnasium-gem","branch":"master"}',
                 :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
           .to_return(:status => 200,
-                     :body => "{ \"is_private\": \"private\", \"name\": \"gemnasium-gemn\", \"profile\": \"#{config.profile_name}\", \"remaining_slot\": 9001 }",
+                     :body => "{ \"name\": \"gemnasium-gemn\", \"profile\": \"#{config.profile_name}\", \"remaining_slot\": 9001 }",
                      :headers => {'Content-Type'=>'application/json'})
   stub_request(:post, api_url("/api/#{config.api_version}/profiles/#{config.profile_name}/projects"))
-          .with(:body => '{"name":"existing_project","privacy":"private","branch":"master"}',
+          .with(:body => '{"name":"existing_project","branch":"master"}',
                 :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
           .to_return do |request|
             request_body = JSON.parse(request.body)
@@ -59,10 +58,10 @@ def stub_requests
             }
           end
   stub_request(:post, api_url("/api/#{config.api_version}/profiles/#{config.profile_name}/projects"))
-          .with(:body => '{"name":"existing_project","privacy":"private","branch":"master","overwrite_attributes":true}',
+          .with(:body => '{"name":"existing_project","branch":"master","overwrite_attributes":true}',
                 :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
           .to_return(:status => 200,
-                     :body => "{ \"is_private\": \"private\", \"name\": \"existing_project\", \"profile\": \"#{config.profile_name}\", \"remaining_slot\": 9001 }",
+                     :body => "{ \"name\": \"existing_project\", \"profile\": \"#{config.profile_name}\", \"remaining_slot\": 9001 }",
                      :headers => {'Content-Type'=>'application/json'})
 
   # Connection model's test requests
