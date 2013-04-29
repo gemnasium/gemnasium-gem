@@ -3,9 +3,10 @@ require 'spec_helper'
 
 describe Gemnasium::Configuration do
   describe 'default config' do
-    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG[:site]).to eql 'gemnasium.com' }
-    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG[:use_ssl]).to eql true }
-    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG[:api_version]).to eql 'v2' }
+    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG['site']).to eql 'gemnasium.com' }
+    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG['use_ssl']).to eql true }
+    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG['api_version']).to eql 'v2' }
+    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG['ignored_paths']).to eql [] }
   end
 
   describe 'initialize' do
@@ -29,7 +30,7 @@ describe Gemnasium::Configuration do
       end
 
       context 'with all mandatory values' do
-        let(:config_options) {{ api_key: 'api_key', profile_name: 'tech-angels', project_name: 'gemnasium-gem', project_branch: 'master' }}
+        let(:config_options) {{ api_key: 'api_key', profile_name: 'tech-angels', project_name: 'gemnasium-gem', project_branch: 'master', ignored_paths: ['/spec','tmp/*.lock', '/*.gemspec'] }}
         before do
           File.open(config_file_path, 'w+') { |f| f.write(config_options.to_yaml) }
         end
@@ -39,9 +40,12 @@ describe Gemnasium::Configuration do
         it { expect(config.profile_name).to eql config_options[:profile_name] }
         it { expect(config.project_name).to eql config_options[:project_name] }
         it { expect(config.project_branch).to eql config_options[:project_branch] }
-        it { expect(config.site).to eql Gemnasium::Configuration::DEFAULT_CONFIG[:site] }
-        it { expect(config.use_ssl).to eql Gemnasium::Configuration::DEFAULT_CONFIG[:use_ssl] }
-        it { expect(config.api_version).to eql Gemnasium::Configuration::DEFAULT_CONFIG[:api_version] }
+        it { expect(config.site).to eql Gemnasium::Configuration::DEFAULT_CONFIG['site'] }
+        it { expect(config.use_ssl).to eql Gemnasium::Configuration::DEFAULT_CONFIG['use_ssl'] }
+        it { expect(config.api_version).to eql Gemnasium::Configuration::DEFAULT_CONFIG['api_version'] }
+        it { expect(config.ignored_paths).to include /^spec/ }
+        it { expect(config.ignored_paths).to include /tmp\/[^\/]+\.lock/ }
+        it { expect(config.ignored_paths).to include /^[^\/]+\.gemspec/ }
       end
     end
   end
