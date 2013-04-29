@@ -21,7 +21,8 @@ describe Gemnasium do
   before do
     Gemnasium.stub(:notify) { |arg| output << arg }
     Gemnasium.stub(:quit_because_of) { |arg| error_output << arg && abort }
-    stub_config && stub_requests
+    stub_config
+    stub_requests
   end
 
   describe 'push' do

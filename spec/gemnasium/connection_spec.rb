@@ -1,7 +1,10 @@
 require 'spec_helper'
 
 describe Gemnasium::Connection do
-  before { stub_config && stub_requests }
+  before do
+    stub_config
+    stub_requests
+  end
   let(:connection) { Gemnasium::Connection.new }
 
   describe 'initialize' do
