@@ -14,10 +14,27 @@ describe Gemnasium::DependencyFiles do
     end
 
     context 'with a mathing regexp' do
+      before { Gemnasium.stub_chain(:config, :ignored_paths).and_return([]) }
       it 'returns a Hash of matching files and their git calculated hash' do
         sha1s_hash = Gemnasium::DependencyFiles.get_sha1s_hash(project_path)
 
         expect(sha1s_hash).to include({ 'gemnasium.gemspec' => git_hash('gemnasium.gemspec') })
+      end
+    end
+
+    context 'with some ignored paths' do
+      let(:ignored_file_path) { 'tmp/ignored.gemspec' }
+      before do
+        FileUtils.touch(ignored_file_path)
+        Gemnasium.stub_chain(:config, :ignored_paths).and_return([/^tmp/, /[^\/]+\.lock/])
+      end
+      after { File.delete(ignored_file_path) }
+
+      it 'returns a Hash of matching files without ignored ones' do
+        sha1s_hash = Gemnasium::DependencyFiles.get_sha1s_hash(project_path)
+
+        expect(sha1s_hash).to_not have_key(ignored_file_path)
+        expect(sha1s_hash).to_not have_key('Gemfile.lock')
       end
     end
   end
