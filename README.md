@@ -118,13 +118,19 @@ Here is a sample config file:
 ```yaml
 api_key: "some_secret_api_key"
 profile_name: "tech-angels"
-project_name: "vandamme"   
+project_name: "vandamme"
 project_branch: "master"
+ignored_paths:
+  - spec/
+  - tmp/
 ```
+
+This will handle the dependencies of the _vandamme_ project for the _tech-angels_ profile on _master_ branch.
+Gemnasium gem will also ignore the project dependency files found in _spec/_ and _tmp/_.
 
 ## Troubleshooting
 
-Gemnasium will try to display the most accurate error message when something goes wrong. 
+Gemnasium will try to display the most accurate error message when something goes wrong.
 
 Though, if you're stil stuck with something, feel free to contact [Gemnasium support](https://gemnasium.freshdesk.com).
 
