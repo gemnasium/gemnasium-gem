@@ -121,12 +121,12 @@ profile_name: "tech-angels"
 project_name: "vandamme"
 project_branch: "master"
 ignored_paths:
-  - /spec/
-  - /tmp
+  - spec/
+  - tmp/
 ```
 
 This will handle the dependencies of the _vandamme_ project for the _tech-angels_ profile on _master_ branch.
-Gemnasium gem will also ignore the project dependency files found in _/spec and _/tmp_.
+Gemnasium gem will also ignore the project dependency files found in _spec/_ and _tmp/_.
 
 ## Troubleshooting
 

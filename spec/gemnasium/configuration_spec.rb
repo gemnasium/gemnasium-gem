@@ -30,7 +30,7 @@ describe Gemnasium::Configuration do
       end
 
       context 'with all mandatory values' do
-        let(:config_options) {{ api_key: 'api_key', profile_name: 'tech-angels', project_name: 'gemnasium-gem', project_branch: 'master', ignored_paths: ['/spec','tmp/*.lock', '/*.gemspec'] }}
+        let(:config_options) {{ api_key: 'api_key', profile_name: 'tech-angels', project_name: 'gemnasium-gem', project_branch: 'master', ignored_paths: ['spec/','tmp/*.lock', '*.gemspec'] }}
         before do
           File.open(config_file_path, 'w+') { |f| f.write(config_options.to_yaml) }
         end
@@ -43,9 +43,9 @@ describe Gemnasium::Configuration do
         it { expect(config.site).to eql Gemnasium::Configuration::DEFAULT_CONFIG['site'] }
         it { expect(config.use_ssl).to eql Gemnasium::Configuration::DEFAULT_CONFIG['use_ssl'] }
         it { expect(config.api_version).to eql Gemnasium::Configuration::DEFAULT_CONFIG['api_version'] }
-        it { expect(config.ignored_paths).to include /^spec/ }
-        it { expect(config.ignored_paths).to include /tmp\/[^\/]+\.lock/ }
-        it { expect(config.ignored_paths).to include /^[^\/]+\.gemspec/ }
+        it { expect(config.ignored_paths).to include Regexp.new("^spec/") }
+        it { expect(config.ignored_paths).to include Regexp.new("^tmp/[^/]+\\.lock") }
+        it { expect(config.ignored_paths).to include Regexp.new("^[^\/]+\\.gemspec") }
       end
     end
   end

@@ -48,9 +48,9 @@ module Gemnasium
       return [] unless paths.kind_of? Array
 
       paths.inject([]) do |regexp_array, path|
-        path = path.gsub(/^(\/)/, '^')    # Remove first slash to `beginning of the string` regexp char
-                   .gsub('*','[^/]+')     # Replace `*` to whatever char except slash
-                   .gsub('.','\.')        # Escape dots
+        path = path.insert(0,'^')       # All path start from app root
+                   .gsub('*','[^/]+')   # Replace `*` to whatever char except slash
+                   .gsub('.','\.')      # Escape dots
         regexp_array << Regexp.new(path)
       end
     end
