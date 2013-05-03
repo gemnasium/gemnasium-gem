@@ -1,4 +1,5 @@
 require 'yaml'
+require 'erb'
 
 module Gemnasium
   class Configuration
@@ -14,7 +15,7 @@ module Gemnasium
     def initialize config_file
       raise Errno::ENOENT, "Configuration file (#{config_file}) does not exist.\nPlease run `gemnasium install`." unless File.file?(config_file)
 
-      config_hash = DEFAULT_CONFIG.merge!(YAML.load_file(config_file))
+      config_hash = DEFAULT_CONFIG.merge!(YAML.load(ERB.new(File.read(config_file)).result))
       config_hash.each do |k, v|
         writer_method = "#{k}="
         if respond_to?(writer_method)
