@@ -7,3 +7,4 @@ ignored_paths:                # Paths you want to ignore when searching for depe
   - spec/
   - test/
   - tmp/
+  - vendor/
