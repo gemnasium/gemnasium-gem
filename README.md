@@ -30,7 +30,7 @@ Add configuration file in your project
 
 Install command supports 2 options : `--rake` and `--git` to respectively install the gemnasium [rake task](#2-via-the-rake-task) and a [post-commit git hook](#3-via-the-post-commit-git-hook).
 
-`gemnasium install` will add the config/gemnasium.yml file to your .gitignore so your private API key won't be committed. If you use another versionning system, please remember to ignore this file, especially for public project. 
+`gemnasium install` will add the config/gemnasium.yml file to your .gitignore so your private API key won't be committed. If you use another versionning system, please remember to ignore this file. 
 
 __Warning: your api key is dedicated to your own user account and must not be published!__
 
