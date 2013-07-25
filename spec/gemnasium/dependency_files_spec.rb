@@ -22,19 +22,31 @@ describe Gemnasium::DependencyFiles do
       end
     end
 
-    context 'with some ignored paths' do
-      let(:ignored_file_path) { 'tmp/ignored.gemspec' }
-      before do
-        FileUtils.touch(ignored_file_path)
-        Gemnasium.stub_chain(:config, :ignored_paths).and_return([/^tmp/, /[^\/]+\.lock/])
-      end
-      after { File.delete(ignored_file_path) }
+    context 'with a dependency file in a subdirectory' do
+      let(:subdir_file_path) { 'tmp/ignored.gemspec' }
 
-      it 'returns a Hash of matching files without ignored ones' do
+      before do
+        FileUtils.touch(subdir_file_path)
+        Gemnasium.stub_chain(:config, :ignored_paths).and_return([])
+      end
+      after  { File.delete(subdir_file_path) }
+
+      it 'returns a Hash of the subdirectory dependency file' do
         sha1s_hash = Gemnasium::DependencyFiles.get_sha1s_hash(project_path)
 
-        expect(sha1s_hash).to_not have_key(ignored_file_path)
-        expect(sha1s_hash).to_not have_key('Gemfile.lock')
+        expect(sha1s_hash).to have_key(subdir_file_path)
+        expect(sha1s_hash).to have_key('Gemfile.lock')
+      end
+
+      context 'which is ignored' do
+        before { Gemnasium.stub_chain(:config, :ignored_paths).and_return([/^tmp/, /[^\/]+\.lock/]) }
+
+        it 'returns a Hash of matching files without ignored ones' do
+          sha1s_hash = Gemnasium::DependencyFiles.get_sha1s_hash(project_path)
+
+          expect(sha1s_hash).to_not have_key(subdir_file_path)
+          expect(sha1s_hash).to_not have_key('Gemfile.lock')
+        end
       end
     end
   end
