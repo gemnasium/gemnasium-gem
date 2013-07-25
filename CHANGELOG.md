@@ -1,3 +1,7 @@
+# 2.0.1 / 2013-07-25
+
+* Update regexp to fetch dependency files in subrepositories.
+
 # 2.0.0 / 2013-04-30
 
 **API V1 is now deprecated and all previous gem releases have been yanked**
