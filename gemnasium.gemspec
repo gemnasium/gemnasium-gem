@@ -6,6 +6,7 @@ Gem::Specification.new do |gem|
   gem.description   = "Safely upload your dependency files (Gemfile, Gemfile.lock, *.gemspec, package.json, npm-shrinkwrap.json) on gemnasium.com to track dependencies and get notified about updates and security advisories."
   gem.summary       = gem.description
   gem.homepage      = "https://gemnasium.com/"
+  gem.license       = 'MIT'
 
   gem.files         = `git ls-files`.split($\)
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
