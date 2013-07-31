@@ -37,6 +37,8 @@ describe Gemnasium::DependencyFiles do
         expect(sha1s_hash).to have_key(subdir_file_path)
         if File.exists?('Gemfile.lock')
           expect(sha1s_hash).to have_key('Gemfile.lock')
+        else
+          pending "Warning: 'Gemfile.lock' not found, skipping test."
         end
       end
 
