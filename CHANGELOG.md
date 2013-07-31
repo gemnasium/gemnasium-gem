@@ -1,3 +1,7 @@
+# 2.0.2 / 2013-07-31
+
+* [#6][] Fix spec for fedora packaging (@ktdreyer)
+
 # 2.0.1 / 2013-07-25
 
 * Update regexp to fetch dependency files in subrepositories.
