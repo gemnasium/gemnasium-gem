@@ -62,6 +62,10 @@ See `gemnasium COMMAND --help` for more information on a specific command.
         'push'    => OptionParser.new do |opts|
           opts.banner = 'Usage: gemnasium push'
 
+          opts.on '--silent-branch', 'Ignore untracked branches' do
+            options[:silent_branch] = true
+          end
+
           opts.on '-h', '--help', 'Display this message' do
             options[:show_help] = true
           end

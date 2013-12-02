@@ -14,7 +14,13 @@ module Gemnasium
       @config = load_config(options[:project_path])
 
       unless current_branch == @config.project_branch
-        quit_because_of("Gemnasium : Dependency files updated but not on tracked branch (#{@config.project_branch}), ignoring...\n")
+        message = "Gemnasium : Dependency files updated but not on tracked branch (#{@config.project_branch}), ignoring...\n"
+        if options[:silent_branch]
+          notify message, :blue
+          return
+        else
+          quit_because_of(message)
+        end
       end
 
       dependency_files_hashes = DependencyFiles.get_sha1s_hash(options[:project_path])
