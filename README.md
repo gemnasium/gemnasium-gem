@@ -132,7 +132,7 @@ Gemnasium gem will also ignore the project dependency files found in _spec/_ and
 
 Gemnasium will try to display the most accurate error message when something goes wrong.
 
-Though, if you're stil stuck with something, feel free to contact [Gemnasium support](https://gemnasium.freshdesk.com).
+Though, if you're stil stuck with something, feel free to contact [Gemnasium support](http://support.gemnasium.com).
 
 ## Contributing
 
