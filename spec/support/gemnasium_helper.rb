@@ -51,7 +51,7 @@ def stub_requests
                 :headers => request_headers)
           .to_return(:status => 200,
                      # FIXME: make sure the response body is consistent with API v3
-                     :body => '{ "slug": "new-slug", "remaining_slot": 9001 }',
+                     :body => '{ "name": "gemnasium-gem", "slug": "new-slug", "remaining_slot_count": 9001 }',
                      :headers => response_headers)
 
   # Connection model's test requests

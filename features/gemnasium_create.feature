@@ -1,7 +1,8 @@
 Feature: Create or update a project on Gemnasium
 
   By using gemnasium create [options], the user is able to create a new
-  project on Gemnasium or to update an existing one.
+  project on Gemnasium. The user cannot create a project if the configuration
+  already refers to an existing project.
 
   Scenario: Without configuration file
     Given a directory named "project/foo/bar"

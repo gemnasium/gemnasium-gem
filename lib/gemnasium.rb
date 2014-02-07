@@ -114,13 +114,18 @@ module Gemnasium
     def create_project options
       @config = load_config(options[:project_path])
 
+      unless @config.project_slug.empty?
+        quit_because_of("You already have a project slug refering to an existing project. Please remove this project slug from your configuration file to create a new project.")
+      end
+
       project_params = { name: @config.project_name, branch: @config.project_branch}
       project_params.merge!({ overwrite_attributes: true }) if !!options[:overwrite_attr]
 
       creation_result = request("#{connection.api_path_for('projects')}", project_params)
 
-      notify "Project `#{creation_result['name']}` successfully created for #{creation_result['profile']}.", :green
-      notify "Remaining private slots for this profile: #{creation_result['remaining_slot']}", :blue
+      notify "Project `#{creation_result['name']}` successfully created.", :green
+      notify "Project slug is `#{creation_result['slug']}`.", :green
+      notify "Remaining private slots: #{creation_result['remaining_slot_count']}", :blue
     rescue => exception
       quit_because_of(exception.message)
     end

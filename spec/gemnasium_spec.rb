@@ -133,35 +133,19 @@ describe Gemnasium do
   end
 
   describe 'create_project' do
-    context 'for an already existing project' do
-      before { stub_config({ project_name: 'existing_project' }) }
+    context 'with a project slug' do
+      before { stub_config({ project_slug: 'existing-slug' }) }
 
-      context 'without overwrite option' do
-        it 'quit the program with an error' do
-          expect{ Gemnasium.create_project({ project_path: project_path }) }.to raise_error { |e|
-            expect(e).to be_kind_of SystemExit
-            expect(error_output).to include "The project `#{Gemnasium.config.project_name}` already exists for the profile `#{Gemnasium.config.profile_name}`."
-          }
-        end
-      end
-
-      context 'with overwrite option' do
-        before { Gemnasium.create_project({ project_path: project_path, overwrite_attr: true }) }
-
-        it 'issues the correct request' do
-          expect(WebMock).to have_requested(:post, api_url("/api/v3/profiles/tech-angels/projects"))
-              .with(:body => {name: "existing_project", branch: "master", overwrite_attributes: true},
-                    :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
-        end
-
-        it 'displays a confirmation message' do
-          expect(output).to include 'Project `existing_project` successfully created for tech-angels.'
-          expect(output).to include 'Remaining private slots for this profile: 9001'
-        end
+      it 'quit the program with an error' do
+        expect{ Gemnasium.create_project({ project_path: project_path }) }.to raise_error { |e|
+          expect(e).to be_kind_of SystemExit
+          expect(error_output).to include "You already have a project slug refering to an existing project. Please remove this project slug from your configuration file to create a new project."
+        }
       end
     end
 
-    context 'for an inexistant project' do
+    context 'with no project slug' do
+      before { stub_config({ project_slug: '' }) }
       before { Gemnasium.create_project({ project_path: project_path }) }
 
       it 'issues the correct request' do
@@ -171,8 +155,9 @@ describe Gemnasium do
       end
 
       it 'displays a confirmation message' do
-        expect(output).to include 'Project `gemnasium-gemn` successfully created for tech-angels.'
-        expect(output).to include 'Remaining private slots for this profile: 9001'
+        expect(output).to include 'Project `gemnasium-gem` successfully created.'
+        expect(output).to include 'Project slug is `new-slug`.'
+        expect(output).to include 'Remaining private slots: 9001'
       end
     end
   end
