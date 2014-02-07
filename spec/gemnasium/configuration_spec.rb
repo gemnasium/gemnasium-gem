@@ -5,7 +5,7 @@ describe Gemnasium::Configuration do
   describe 'default config' do
     it { expect(Gemnasium::Configuration::DEFAULT_CONFIG['site']).to eql 'gemnasium.com' }
     it { expect(Gemnasium::Configuration::DEFAULT_CONFIG['use_ssl']).to eql true }
-    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG['api_version']).to eql 'v2' }
+    it { expect(Gemnasium::Configuration::DEFAULT_CONFIG['api_version']).to eql 'v3' }
     it { expect(Gemnasium::Configuration::DEFAULT_CONFIG['ignored_paths']).to eql [] }
   end
 
@@ -21,7 +21,7 @@ describe Gemnasium::Configuration do
       after { File.delete(config_file_path) }
 
       context 'with missing mandatory values' do
-        let(:config_options) {{ profile_name: 'tech-angels', project_name: 'gemnasium-gem' }}
+        let(:config_options) {{ project_name: 'gemnasium-gem' }}
         before do
           File.open(config_file_path, 'w+') { |f| f.write(config_options.to_yaml) }
         end
@@ -30,15 +30,19 @@ describe Gemnasium::Configuration do
       end
 
       context 'with all mandatory values' do
-        let(:config_options) {{ api_key: 'api_key', profile_name: 'tech-angels', project_name: 'gemnasium-gem', project_branch: 'master', ignored_paths: ['spec/','tmp/*.lock', '*.gemspec'] }}
+        let(:config_options) {{ api_key: 'api_key', project_name: 'gemnasium-gem', project_branch: 'master', ignored_paths: ['spec/','tmp/*.lock', '*.gemspec'] }}
         before do
           File.open(config_file_path, 'w+') { |f| f.write(config_options.to_yaml) }
         end
         let(:config) { Gemnasium::Configuration.new File.expand_path(config_file_path) }
 
         it { expect(config.api_key).to eql config_options[:api_key] }
+
+        # Keep profile name for backward compatibility with version =< 2.0
         it { expect(config.profile_name).to eql config_options[:profile_name] }
+
         it { expect(config.project_name).to eql config_options[:project_name] }
+        it { expect(config.project_slug).to eql config_options[:project_slug] }
         it { expect(config.project_branch).to eql config_options[:project_branch] }
         it { expect(config.site).to eql Gemnasium::Configuration::DEFAULT_CONFIG['site'] }
         it { expect(config.use_ssl).to eql Gemnasium::Configuration::DEFAULT_CONFIG['use_ssl'] }

@@ -2,10 +2,15 @@ require 'yaml'
 
 module Gemnasium
   class Configuration
-    attr_accessor :site, :api_key, :use_ssl, :profile_name, :project_name, :api_version, :project_branch, :ignored_paths
+    attr_accessor :site, :api_key, :use_ssl, :api_version, :project_branch, :ignored_paths
+
+    attr_accessor :project_name # Name is required only to create the project, make it mandatory.
+    attr_accessor :project_slug # Slug is required only to push the dependency files, make it optional.
+    attr_accessor :profile_name # Keep profile name for backward compatibility with version =< 2.0
+
     DEFAULT_CONFIG = { 'site' => 'gemnasium.com',
                        'use_ssl' => true,
-                       'api_version' => 'v2',
+                       'api_version' => 'v3',
                        'ignored_paths' => [] }
 
     # Initialize the configuration object from a YAML file
@@ -36,12 +41,11 @@ module Gemnasium
       api_key_option_valid            = !api_key.nil? && !api_key.empty?
       use_ssl_option_valid            = !use_ssl.nil? && !!use_ssl == use_ssl # Check this is a boolean
       api_version_option_valid        = !api_version.nil? && !api_version.empty?
-      profile_name_option_valid       = !profile_name.nil? && !profile_name.empty?
       project_name_option_valid       = !project_name.nil? && !project_name.empty?
       ignored_paths_option_valid      = ignored_paths.kind_of?(Array)
 
       site_option_valid && api_key_option_valid && use_ssl_option_valid && api_version_option_valid &&
-      profile_name_option_valid && project_name_option_valid && ignored_paths_option_valid
+      project_name_option_valid && ignored_paths_option_valid
     end
 
     def convert_ignored_paths_to_regexp(paths)
