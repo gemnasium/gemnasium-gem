@@ -146,18 +146,41 @@ describe Gemnasium do
 
     context 'with no project slug' do
       before { stub_config({ project_slug: '' }) }
-      before { Gemnasium.create_project({ project_path: project_path }) }
 
       it 'issues the correct request' do
+        Gemnasium.create_project({ project_path: project_path })
+
         expect(WebMock).to have_requested(:post, api_url("/api/v3/projects"))
             .with(:body => {name: "gemnasium-gem", branch: "master"},
                   :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
       end
 
       it 'displays a confirmation message' do
+        Gemnasium.create_project({ project_path: project_path })
+
         expect(output).to include 'Project `gemnasium-gem` successfully created.'
         expect(output).to include 'Project slug is `new-slug`.'
         expect(output).to include 'Remaining private slots: 9001'
+        expect(output).to include 'Your configuration file has been updated.'
+      end
+
+      it 'updates the configuration file' do
+        expect(Gemnasium.config).to receive(:store_value!)
+          .with(:project_slug, 'new-slug', "This unique project slug has been set by `gemnasium create`.")
+
+        Gemnasium.create_project({ project_path: project_path })
+      end
+    end
+
+    context 'with a read-only config file' do
+      before { stub_config({ project_slug: '', writable?: false }) }
+      before { Gemnasium.create_project({ project_path: project_path }) }
+
+      it 'displays a confirmation message' do
+        expect(output).to include 'Project `gemnasium-gem` successfully created.'
+        expect(output).to include 'Project slug is `new-slug`.'
+        expect(output).to include 'Remaining private slots: 9001'
+        expect(output).to include 'Configuration file cannot be updated. Please edit the file and update the project slug manually.'
       end
     end
   end

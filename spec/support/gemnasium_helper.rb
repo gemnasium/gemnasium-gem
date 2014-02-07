@@ -14,6 +14,8 @@ def stub_config(options = {})
   stubbed_config.stub(:project_name).and_return(options[:project_name] || 'gemnasium-gem')
   stubbed_config.stub(:project_slug).and_return(options[:project_slug] || 'existing-slug')
   stubbed_config.stub(:project_branch).and_return('master')
+  stubbed_config.stub(:writable?).and_return(options.fetch(:writable?, true))
+  stubbed_config.stub(:store_value!).and_return(true)
 
   Gemnasium.stub(:config).and_return(stubbed_config)
   Gemnasium.stub(:load_config).and_return(stubbed_config)

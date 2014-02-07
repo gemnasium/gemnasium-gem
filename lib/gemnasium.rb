@@ -119,11 +119,20 @@ module Gemnasium
 
       project_params = { name: @config.project_name, branch: @config.project_branch}
 
-      creation_result = request("#{connection.api_path_for('projects')}", project_params)
+      result = request("#{connection.api_path_for('projects')}", project_params)
+      project_name, project_slug, remaining_slot_count = result.values_at 'name', 'slug', 'remaining_slot_count'
 
-      notify "Project `#{creation_result['name']}` successfully created.", :green
-      notify "Project slug is `#{creation_result['slug']}`.", :green
-      notify "Remaining private slots: #{creation_result['remaining_slot_count']}", :blue
+      notify "Project `#{ project_name }` successfully created.", :green
+      notify "Project slug is `#{ project_slug }`.", :green
+      notify "Remaining private slots: #{ remaining_slot_count }", :blue
+
+      if @config.writable?
+        @config.store_value!(:project_slug, project_slug, "This unique project slug has been set by `gemnasium create`.")
+        notify "Your configuration file has been updated."
+      else
+        notify "Configuration file cannot be updated. Please edit the file and update the project slug manually."
+      end
+
     rescue => exception
       quit_because_of(exception.message)
     end
