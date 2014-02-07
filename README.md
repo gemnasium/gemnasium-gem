@@ -30,7 +30,7 @@ Add configuration file in your project
 
 Install command supports 2 options : `--rake` and `--git` to respectively install the gemnasium [rake task](#2-via-the-rake-task) and a [post-commit git hook](#3-via-the-post-commit-git-hook).
 
-`gemnasium install` will add the config/gemnasium.yml file to your .gitignore so your private API key won't be committed. If you use another versionning system, please remember to ignore this file. 
+`gemnasium install` will add the config/gemnasium.yml file to your .gitignore so your private API key won't be committed. If you use another versionning system, please remember to ignore this file.
 
 __Warning: your api key is dedicated to your own user account and must not be published!__
 
@@ -49,7 +49,6 @@ __To create a project on Gemnasium:__
     $ gemnasium create
 
 Create command will look for data in your config/gemnasium.yml configuration file to create a project.
-If your project was previously managed automatically from Github you can use the `--force` option to overwrite existing setup.
 
 Please note that automatic Github synchronization will be dropped once project is configured with this gem.
 
@@ -67,7 +66,6 @@ __To create a project on Gemnasium:__
     $ rake gemnasium:create
 
 Create command will look for data in your config/gemnasium.yml configuration file to create a project.
-If your project was previously managed automatically from Github you can use the `gemnasium:create:force` subtask to overwrite existing setup.
 
 Please note that automatic Github synchronization will be dropped once project is configured with this gem.
 

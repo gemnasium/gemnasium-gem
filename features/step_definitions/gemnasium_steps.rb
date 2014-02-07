@@ -37,7 +37,6 @@ Then /^it should create the task file$/ do
       Usage:
       	rake gemnasium:push 		- to push your dependency files
       	rake gemnasium:create 		- to create your project on Gemnasium
-      	rake gemnasium:create:force - to overwrite already existing Gemnasium project attributes
       """
     And a file named "lib/tasks/gemnasium.rake" should exist
   }

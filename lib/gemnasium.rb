@@ -97,7 +97,6 @@ module Gemnasium
             notify 'Usage:', :blue
             notify "\trake gemnasium:push \t\t- to push your dependency files", :blue
             notify "\trake gemnasium:create \t\t- to create your project on Gemnasium", :blue
-            notify "\trake gemnasium:create:force - to overwrite already existing Gemnasium project attributes", :blue
           end
         end
       end

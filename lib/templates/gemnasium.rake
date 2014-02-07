@@ -10,11 +10,4 @@ namespace :gemnasium do
   task :create do
     Gemnasium.create_project project_path: File.expand_path(".")
   end
-
-  namespace :create do
-    desc "Force project creation/update on gemnasium"
-    task :force do
-      Gemnasium.create_project project_path: File.expand_path("."), overwrite_attr: true
-    end
-  end
 end

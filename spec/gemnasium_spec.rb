@@ -310,7 +310,6 @@ describe Gemnasium do
             expect(output).to include 'Usage:'
             expect(output).to include "\trake gemnasium:push \t\t- to push your dependency files"
             expect(output).to include "\trake gemnasium:create \t\t- to create your project on Gemnasium"
-            expect(output).to include "\trake gemnasium:create:force - to overwrite already existing Gemnasium project attributes"
           end
         end
 
@@ -340,7 +339,6 @@ describe Gemnasium do
               expect(output).to include 'Usage:'
               expect(output).to include "\trake gemnasium:push \t\t- to push your dependency files"
               expect(output).to include "\trake gemnasium:create \t\t- to create your project on Gemnasium"
-              expect(output).to include "\trake gemnasium:create:force - to overwrite already existing Gemnasium project attributes"
             end
           end
         end

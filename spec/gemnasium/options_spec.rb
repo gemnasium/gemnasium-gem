@@ -72,13 +72,6 @@ describe Gemnasium::Options do
             expect(options).to eql({ command: 'create' })
           end
         end
-
-        context 'with force option' do
-          it 'correctly set the options' do
-            options, parser = Gemnasium::Options.parse ['create', '--force']
-            expect(options).to eql({ command: 'create', overwrite_attr: true })
-          end
-        end
       end
 
       context '`install`' do

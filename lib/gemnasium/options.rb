@@ -36,10 +36,6 @@ See `gemnasium COMMAND --help` for more information on a specific command.
         'create'  => OptionParser.new do |opts|
           opts.banner = 'Usage: gemnasium create [options]'
 
-          opts.on('--force', "Force overwriting project's attributes if it already exists") do
-            options[:overwrite_attr] = true
-          end
-
           opts.on '-h', '--help', 'Display this message' do
             options[:show_help] = true
           end
