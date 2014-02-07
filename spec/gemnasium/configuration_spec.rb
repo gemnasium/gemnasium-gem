@@ -50,6 +50,34 @@ describe Gemnasium::Configuration do
         it { expect(config.ignored_paths).to include Regexp.new("^spec/") }
         it { expect(config.ignored_paths).to include Regexp.new("^tmp/[^/]+\\.lock") }
         it { expect(config.ignored_paths).to include Regexp.new("^[^\/]+\\.gemspec") }
+
+        pending "writable?"
+
+        describe "#store_value!" do
+          context "with a new value for an existing key" do
+            let(:key) { :project_name }
+            let(:value) { 'new-name' }
+            let(:new_config) { Gemnasium::Configuration.new File.expand_path(config_file_path) }
+
+            before do
+              config.store_value! key, value, "my project name"
+            end
+
+            it "updates the given key-value pair" do
+              expect(new_config.project_name).to eql 'new-name'
+            end
+
+            it "keeps other key-value pairs unchanged" do
+              expect(new_config.api_key).to eql config_options[:api_key]
+              expect(new_config.project_branch).to eql config_options[:project_branch]
+            end
+
+            it "stores the given comment" do
+              content = File.read File.expand_path(config_file_path)
+              expect(content).to match /:project_name:.*# my project name/
+            end
+          end
+        end
       end
     end
   end

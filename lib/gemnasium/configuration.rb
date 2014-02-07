@@ -17,7 +17,11 @@ module Gemnasium
     #
     # @param config_file [String] path to the configuration file
     def initialize config_file
-      raise Errno::ENOENT, "Configuration file (#{config_file}) does not exist.\nPlease run `gemnasium install`." unless File.file?(config_file)
+      unless File.file?(config_file)
+        raise Errno::ENOENT,
+          "Configuration file (#{config_file}) does not exist.\nPlease run `gemnasium install`."
+      end
+      @path = config_file
 
       config_hash = DEFAULT_CONFIG.merge!(YAML.load_file(config_file))
       config_hash.each do |k, v|
@@ -31,7 +35,33 @@ module Gemnasium
       raise 'Your configuration file does not contain all mandatory parameters or contain invalid values. Please check the documentation.' unless is_valid?
     end
 
+    # Store a key-value pair in the configuration file with an optional comment.
+    # Try to preserve the comments and the indentation of the file.
+    # We assume the configuration file already features the given key.
+    #
+    # @param key [String] key
+    # @param value [String] value to store for given key
+    # @param comment [String] optional comment
+    #
+    def store_value!(key, value, comment = nil)
+      pattern = /\A:#{ key }:.*\Z/
+      new_line = ":#{ key }: #{ value }"
+      new_line += " # #{ comment }" if comment
+
+      content = File.readlines(path).map do |line|
+        line.strip.sub pattern, new_line
+      end.join("\n")
+
+      File.write path, content
+    end
+
+    def writable?
+      File.writable? path
+    end
+
     private
+
+    attr_reader :path
 
     # Check that mandatory parameters are not nil and contain valid values
     #
