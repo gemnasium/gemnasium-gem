@@ -26,6 +26,7 @@ describe Gemnasium do
   end
 
   describe 'push' do
+
     context 'on a non tracked branch' do
       before { Gemnasium.stub(:current_branch).and_return('non_project_branch') }
 
@@ -39,6 +40,19 @@ describe Gemnasium do
 
     context 'on the tracked branch' do
       before { Gemnasium.stub(:current_branch).and_return('master') }
+
+      context 'with no project slug' do
+        before do
+          stub_config({ project_slug: '' })
+        end
+
+        it 'quit the program with an error' do
+          expect{ Gemnasium.push({ project_path: project_path }) }.to raise_error { |e|
+            expect(e).to be_kind_of SystemExit
+            expect(error_output).to include "Project slug not defined. Please create a new project or set the slug of your exisiting project in your configuration file."
+          }
+        end
+      end
 
       context 'with no supported dependency files found' do
         before { Gemnasium::DependencyFiles.stub(:get_sha1s_hash).and_return([]) }
@@ -57,7 +71,7 @@ describe Gemnasium do
 
         context 'for a gemnasium project already up-to-date' do
           before do
-            stub_config({ project_name: 'up_to_date_project' })
+            stub_config({ project_slug: 'up_to_date_project' })
             Gemnasium.push({ project_path: project_path })
           end
 
@@ -79,7 +93,7 @@ describe Gemnasium do
           end
 
           it 'makes a request to Gemnasium to get updated files to upload' do
-            expect(WebMock).to have_requested(:post, api_url('/api/v2/profiles/tech-angels/projects/gemnasium-gem/dependency_files/compare'))
+            expect(WebMock).to have_requested(:post, api_url('/api/v3/projects/existing-slug/dependency_files/compare'))
                     .with(:body => sha1_hash.to_json,
                           :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
           end
@@ -93,7 +107,7 @@ describe Gemnasium do
           end
 
           it 'makes a request to Gemnasium to upload needed files' do
-            expect(WebMock).to have_requested(:post, api_url('/api/v2/profiles/tech-angels/projects/gemnasium-gem/dependency_files/upload'))
+            expect(WebMock).to have_requested(:post, api_url('/api/v3/projects/existing-slug/dependency_files/upload'))
                     .with(:body => hash_to_upload.to_json,
                           :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
           end
@@ -135,7 +149,7 @@ describe Gemnasium do
         before { Gemnasium.create_project({ project_path: project_path, overwrite_attr: true }) }
 
         it 'issues the correct request' do
-          expect(WebMock).to have_requested(:post, api_url("/api/v2/profiles/tech-angels/projects"))
+          expect(WebMock).to have_requested(:post, api_url("/api/v3/profiles/tech-angels/projects"))
               .with(:body => {name: "existing_project", branch: "master", overwrite_attributes: true},
                     :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
         end
@@ -151,7 +165,7 @@ describe Gemnasium do
       before { Gemnasium.create_project({ project_path: project_path }) }
 
       it 'issues the correct request' do
-        expect(WebMock).to have_requested(:post, api_url("/api/v2/profiles/tech-angels/projects"))
+        expect(WebMock).to have_requested(:post, api_url("/api/v3/projects"))
             .with(:body => {name: "gemnasium-gem", branch: "master"},
                   :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
       end

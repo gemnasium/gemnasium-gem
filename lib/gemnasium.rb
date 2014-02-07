@@ -17,6 +17,10 @@ module Gemnasium
         quit_because_of("Gemnasium : Dependency files updated but not on tracked branch (#{@config.project_branch}), ignoring...\n")
       end
 
+      if @config.project_slug.empty?
+        quit_because_of("Project slug not defined. Please create a new project or set the slug of your exisiting project in your configuration file.")
+      end
+
       dependency_files_hashes = DependencyFiles.get_sha1s_hash(options[:project_path])
       quit_because_of("No supported dependency files detected.") if dependency_files_hashes.empty?
       notify "#{dependency_files_hashes.keys.count} supported dependency file(s) found: #{dependency_files_hashes.keys.join(', ')}"

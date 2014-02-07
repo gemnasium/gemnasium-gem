@@ -10,9 +10,9 @@ def stub_config(options = {})
   stubbed_config.stub(:site).and_return('gemnasium.com')
   stubbed_config.stub(:use_ssl).and_return(true)
   stubbed_config.stub(:api_key).and_return('test_api_key')
-  stubbed_config.stub(:api_version).and_return('v2')
+  stubbed_config.stub(:api_version).and_return('v3')
   stubbed_config.stub(:project_name).and_return(options[:project_name] || 'gemnasium-gem')
-  stubbed_config.stub(:project_slug).and_return(options[:project_slug] || 'bf8bb7634e6debc25c50e2788f187d1b')
+  stubbed_config.stub(:project_slug).and_return(options[:project_slug] || 'existing-slug')
   stubbed_config.stub(:project_branch).and_return('master')
 
   Gemnasium.stub(:config).and_return(stubbed_config)
@@ -31,14 +31,14 @@ def stub_requests
                       :body => '{ "to_upload": [], "deleted": [] }',
                       :headers => response_headers)
 
-  stub_request(:post, api_url("/api/#{config.api_version}/projects/gemnasium-gem/dependency_files/compare"))
+  stub_request(:post, api_url("/api/#{config.api_version}/projects/existing-slug/dependency_files/compare"))
            .with(:body => '{"new_gemspec.gemspec":"gemspec_sha1_hash","modified_lockfile.lock":"lockfile_sha1_hash","Gemfile_unchanged.lock":"gemfile_sha1_hash"}',
                  :headers => request_headers)
            .to_return(:status => 200,
                       :body => '{ "to_upload": ["new_gemspec.gemspec", "modified_lockfile.lock"], "deleted": ["old_dependency_file"] }',
                       :headers => response_headers)
 
-  stub_request(:post, api_url("/api/#{config.api_version}/projects/gemnasium-gem/dependency_files/upload"))
+  stub_request(:post, api_url("/api/#{config.api_version}/projects/existing-slug/dependency_files/upload"))
            .with(:body => '[{"filename":"new_gemspec.gemspec","sha":"gemspec_sha1_hash","content":"stubbed gemspec content"},{"filename":"modified_lockfile.lock","sha":"lockfile_sha1_hash","content":"stubbed lockfile content"}]',
                  :headers => request_headers)
            .to_return(:status => 200,
@@ -50,7 +50,8 @@ def stub_requests
           .with(:body => '{"name":"gemnasium-gem","branch":"master"}',
                 :headers => request_headers)
           .to_return(:status => 200,
-                     :body => '{ "name": "gemnasium-gemn", "remaining_slot": 9001 }', # FIXME: update to latest API version
+                     # FIXME: make sure the response body is consistent with API v3
+                     :body => '{ "slug": "new-slug", "remaining_slot": 9001 }',
                      :headers => response_headers)
 
   # Connection model's test requests
