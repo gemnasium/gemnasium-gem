@@ -109,7 +109,6 @@ module Gemnasium
     # Create the project on Gemnasium
     #
     # @param options [Hash] Parsed options from the command line. Options supported:
-    #             * :overwrite_attr     - Force Gemnasium to overwrite the project attributes.
     #             * :project_path       - Path to the project (required)
     def create_project options
       @config = load_config(options[:project_path])
@@ -119,7 +118,6 @@ module Gemnasium
       end
 
       project_params = { name: @config.project_name, branch: @config.project_branch}
-      project_params.merge!({ overwrite_attributes: true }) if !!options[:overwrite_attr]
 
       creation_result = request("#{connection.api_path_for('projects')}", project_params)
 
