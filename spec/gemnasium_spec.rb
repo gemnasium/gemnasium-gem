@@ -14,6 +14,19 @@ shared_examples_for 'an installed file' do
   end
 end
 
+shared_examples_for 'a command that requires a compatible config file' do
+  context 'with an old configuration file' do
+    before { stub_config(needs_to_migrate?: true) }
+
+    it 'quits the program' do
+      expect{ Gemnasium.push({ project_path: project_path }) }.to raise_error { |e|
+        expect(e).to be_kind_of SystemExit
+        expect(error_output).to include 'Your configuration file is not compatible with this version. Please run the `migrate` command first.'
+      }
+    end
+  end
+end
+
 describe Gemnasium do
   let(:output) { [] }
   let(:error_output) { [] }
@@ -26,6 +39,8 @@ describe Gemnasium do
   end
 
   describe 'push' do
+
+    # it_should_behave_like 'a command that requires a compatible config file'
 
     context 'on a non tracked branch' do
       before { Gemnasium.stub(:current_branch).and_return('non_project_branch') }
@@ -133,6 +148,9 @@ describe Gemnasium do
   end
 
   describe 'create_project' do
+
+    # it_should_behave_like 'a command that requires a compatible config file'
+
     context 'with a project slug' do
       before { stub_config({ project_slug: 'existing-slug' }) }
 
@@ -214,6 +232,8 @@ describe Gemnasium do
   end
 
   describe 'resolve_project' do
+
+    # it_should_behave_like 'a command that requires a compatible config file'
 
     context 'with a project slug' do
       before { stub_config({ project_slug: 'existing-slug' }) }

@@ -12,6 +12,7 @@ module Gemnasium
     #             * :project_path       - Path to the project (required)
     def push options
       @config = load_config(options[:project_path])
+      ensure_config_is_up_to_date!
 
       unless current_branch == @config.project_branch
         quit_because_of("Gemnasium : Dependency files updated but not on tracked branch (#{@config.project_branch}), ignoring...\n")
@@ -114,6 +115,7 @@ module Gemnasium
     #             * :project_path       - Path to the project (required)
     def create_project options
       @config = load_config(options[:project_path])
+      ensure_config_is_up_to_date!
 
       unless @config.project_slug.empty?
         quit_because_of("You already have a project slug refering to an existing project. Please remove this project slug from your configuration file to create a new project.")
@@ -162,6 +164,7 @@ module Gemnasium
     #
     def resolve_project options
       @config = load_config(options[:project_path])
+      ensure_config_is_up_to_date!
 
       # REFACTOR: similar code in #create_project
       unless @config.project_slug.empty?
@@ -205,6 +208,14 @@ module Gemnasium
     end
 
     private
+
+    # Quit with an error message if the config file needs a migration.
+    #
+    def ensure_config_is_up_to_date!
+      if @config.needs_to_migrate?
+        quit_because_of('Your configuration file is not compatible with this version. Please run the `migrate` command first.')
+      end
+    end
 
     # Issue a HTTP request
     #
