@@ -42,6 +42,7 @@ Feature: Help messages about gemnasium gem
         create   :   Create or update project on Gemnasium
         install  :   Install the necessary config file
         push     :   Push your dependency files to Gemnasium
+        migrate  :   Migrate the configuration file
         resolve  :   Resolve project name to an existing project on Gemnasium
 
       See `gemnasium COMMAND --help` for more information on a specific command.\n

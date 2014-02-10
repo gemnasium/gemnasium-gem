@@ -99,6 +99,15 @@ describe Gemnasium::Options do
         end
       end
 
+      context '`migrate`' do
+        context 'with no options' do
+          it 'correctly set the options' do
+            options, parser = Gemnasium::Options.parse ['migrate']
+            expect(options).to eql({ command: 'migrate' })
+          end
+        end
+      end
+
       context '`resolve`' do
         context 'with no options' do
           it 'correctly set the options' do

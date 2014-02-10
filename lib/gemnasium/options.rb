@@ -27,6 +27,7 @@ Available commands are:
   create   :   Create or update project on Gemnasium
   install  :   Install the necessary config file
   push     :   Push your dependency files to Gemnasium
+  migrate  :   Migrate the configuration file
   resolve  :   Resolve project name to an existing project on Gemnasium
 
 See `gemnasium COMMAND --help` for more information on a specific command.
@@ -58,6 +59,13 @@ See `gemnasium COMMAND --help` for more information on a specific command.
         end,
         'push'    => OptionParser.new do |opts|
           opts.banner = 'Usage: gemnasium push'
+
+          opts.on '-h', '--help', 'Display this message' do
+            options[:show_help] = true
+          end
+        end,
+        'migrate'  => OptionParser.new do |opts|
+          opts.banner = 'Usage: gemnasium migrate [options]'
 
           opts.on '-h', '--help', 'Display this message' do
             options[:show_help] = true

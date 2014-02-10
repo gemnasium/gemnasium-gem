@@ -101,6 +101,7 @@ module Gemnasium
             notify 'Usage:', :blue
             notify "\trake gemnasium:push \t\t- to push your dependency files", :blue
             notify "\trake gemnasium:create \t\t- to create your project on Gemnasium", :blue
+            notify "\trake gemnasium:migrate \t\t- to migrate your configuration file", :blue
             notify "\trake gemnasium:resolve \t\t- to resolve the project name to an existing project", :blue
           end
         end
@@ -136,6 +137,22 @@ module Gemnasium
 
     rescue => exception
       quit_because_of(exception.message)
+    end
+
+    # Migrate the configuration file
+    #
+    # @param options [Hash] Parsed options from the command line. Options supported:
+    #             * :project_path       - Path to the project (required)
+    #
+    def migrate options
+      @config = load_config(options[:project_path])
+
+      if @config.needs_to_migrate?
+        @config.migrate!
+        notify "Your configuration has been updated.", :green
+      else
+        notify "Your configuration file is already up-to-date.", :green
+      end
     end
 
     # Find and store the project slug matching the given project name.

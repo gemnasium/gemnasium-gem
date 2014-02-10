@@ -16,6 +16,8 @@ def stub_config(options = {})
   stubbed_config.stub(:project_branch).and_return('master')
   stubbed_config.stub(:writable?).and_return(options.fetch(:writable?, true))
   stubbed_config.stub(:store_value!).and_return(true)
+  stubbed_config.stub(:needs_to_migrate?).and_return(options.fetch(:needs_to_migrate?, false))
+  stubbed_config.stub(:migrate!).and_return(nil)
 
   Gemnasium.stub(:config).and_return(stubbed_config)
   Gemnasium.stub(:load_config).and_return(stubbed_config)

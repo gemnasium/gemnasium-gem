@@ -185,6 +185,34 @@ describe Gemnasium do
     end
   end
 
+  describe 'migrate' do
+
+    context 'when the config file needs a migration' do
+      before { stub_config({ needs_to_migrate?: true }) }
+
+      it 'notifies the user' do
+        Gemnasium.migrate({ project_path: project_path })
+        expect(output).to include "Your configuration has been updated."
+      end
+
+      it 'updates the config file' do
+        expect(Gemnasium.config).to receive(:migrate!)
+        Gemnasium.migrate({ project_path: project_path })
+      end
+    end
+
+    context 'when the config file is already up-to-date' do
+      before do
+        stub_config({ needs_to_migrate?: false })
+        Gemnasium.migrate({ project_path: project_path })
+      end
+
+      it 'notifies the user' do
+        expect(output).to include "Your configuration file is already up-to-date."
+      end
+    end
+  end
+
   describe 'resolve_project' do
 
     context 'with a project slug' do

@@ -11,6 +11,11 @@ namespace :gemnasium do
     Gemnasium.create_project project_path: File.expand_path(".")
   end
 
+  desc "Migrate the configuration file"
+  task :migrate do
+    Gemnasium.migrate project_path: File.expand_path(".")
+  end
+
   desc "Resolve project name on gemnasium"
   task :resolve do
     Gemnasium.resolve_project project_path: File.expand_path(".")
