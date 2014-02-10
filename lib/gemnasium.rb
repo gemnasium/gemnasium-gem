@@ -12,9 +12,14 @@ module Gemnasium
     #             * :project_path       - Path to the project (required)
     def push options
       @config = load_config(options[:project_path])
+      ensure_config_is_up_to_date!
 
       unless current_branch == @config.project_branch
         quit_because_of("Gemnasium : Dependency files updated but not on tracked branch (#{@config.project_branch}), ignoring...\n")
+      end
+
+      unless has_project_slug?
+        quit_because_of('Project slug not defined. Please create a new project or "resolve" the name of an existing project.')
       end
 
       dependency_files_hashes = DependencyFiles.get_sha1s_hash(options[:project_path])
@@ -97,7 +102,8 @@ module Gemnasium
             notify 'Usage:', :blue
             notify "\trake gemnasium:push \t\t- to push your dependency files", :blue
             notify "\trake gemnasium:create \t\t- to create your project on Gemnasium", :blue
-            notify "\trake gemnasium:create:force - to overwrite already existing Gemnasium project attributes", :blue
+            notify "\trake gemnasium:migrate \t\t- to migrate your configuration file", :blue
+            notify "\trake gemnasium:resolve \t\t- to resolve the project name to an existing project", :blue
           end
         end
       end
@@ -106,27 +112,116 @@ module Gemnasium
     # Create the project on Gemnasium
     #
     # @param options [Hash] Parsed options from the command line. Options supported:
-    #             * :overwrite_attr     - Force Gemnasium to overwrite the project attributes.
     #             * :project_path       - Path to the project (required)
     def create_project options
       @config = load_config(options[:project_path])
+      ensure_config_is_up_to_date!
+
+      if has_project_slug?
+        quit_because_of("You already have a project slug refering to an existing project. Please remove this project slug from your configuration file to create a new project.")
+      end
 
       project_params = { name: @config.project_name, branch: @config.project_branch}
-      project_params.merge!({ overwrite_attributes: true }) if !!options[:overwrite_attr]
 
-      creation_result = request("#{connection.api_path_for('projects')}", project_params)
+      result = request("#{connection.api_path_for('projects')}", project_params)
+      project_name, project_slug, remaining_slot_count = result.values_at 'name', 'slug', 'remaining_slot_count'
 
-      notify "Project `#{creation_result['name']}` successfully created for #{creation_result['profile']}.", :green
-      notify "Remaining private slots for this profile: #{creation_result['remaining_slot']}", :blue
+      notify "Project `#{ project_name }` successfully created.", :green
+      notify "Project slug is `#{ project_slug }`.", :green
+      notify "Remaining private slots: #{ remaining_slot_count }", :blue
+
+      if @config.writable?
+        @config.store_value!(:project_slug, project_slug, "This unique project slug has been set by `gemnasium create`.")
+        notify "Your configuration file has been updated."
+      else
+        notify "Configuration file cannot be updated. Please edit the file and update the project slug manually."
+      end
+
     rescue => exception
       quit_because_of(exception.message)
     end
+
+    # Migrate the configuration file
+    #
+    # @param options [Hash] Parsed options from the command line. Options supported:
+    #             * :project_path       - Path to the project (required)
+    #
+    def migrate options
+      @config = load_config(options[:project_path])
+
+      if @config.needs_to_migrate?
+        @config.migrate!
+        notify "Your configuration has been updated.", :green
+        notify "Run `gemnasium resolve` if your config is related to an existing project."
+        notify "Run `gemnasium create` if you want to create a new project on Gemnasium."
+      else
+        notify "Your configuration file is already up-to-date.", :green
+      end
+    end
+
+    # Find and store the project slug matching the given project name.
+    #
+    # @param options [Hash] Parsed options from the command line. Options supported:
+    #             * :project_path       - Path to the project (required)
+    #
+    def resolve_project options
+      @config = load_config(options[:project_path])
+      ensure_config_is_up_to_date!
+
+      # REFACTOR: similar code in #create_project
+      if has_project_slug?
+        quit_because_of("You already have a project slug refering to an existing project. Please remove this project slug from your configuration file.")
+      end
+
+      project_name =  @config.project_name
+      project_branch =  @config.project_branch || 'master'
+      projects = request("#{connection.api_path_for('projects')}")
+
+      candidates = projects.select do |project|
+        project['name'] == project_name && project['origin'] == 'offline' && project['branch'] == project_branch
+      end
+
+      criterias = "name `#{ project_name }` and branch `#{ project_branch }`"
+      if candidates.size == 0
+        quit_because_of("You have no off-line project matching #{ criterias }.")
+      elsif candidates.size > 1
+        quit_because_of("You have more than one off-line project matching #{ criterias }.")
+      end
+
+      project = candidates.first
+      project_slug = project['slug']
+      notify "Project slug is `#{ project_slug }`.", :green
+
+      # REFACTOR: similar code in #create_project
+      if @config.writable?
+        @config.store_value!(:project_slug, project_slug, "This unique project slug has been set by `gemnasium resolve`.")
+        notify "Your configuration file has been updated."
+      else
+        notify "Configuration file cannot be updated. Please edit the file and update the project slug manually."
+      end
+
+    rescue => exception
+      quit_because_of(exception.message)
+    end
+
 
     def config
       @config || quit_because_of('No configuration file loaded')
     end
 
     private
+
+    def has_project_slug?
+      !@config.project_slug.nil?
+    end
+
+    # Quit with an error message if the config file needs a migration.
+    #
+    def ensure_config_is_up_to_date!
+      if @config.needs_to_migrate?
+        quit_because_of('Your configuration file is not compatible with this version. Please run the `migrate` command first.')
+      end
+    end
 
     # Issue a HTTP request
     #

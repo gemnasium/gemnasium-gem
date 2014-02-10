@@ -31,9 +31,9 @@ module Gemnasium
       when 'base'
         base
       when 'projects'
-        "#{base}/profiles/#{Gemnasium.config.profile_name}/projects"
+        "#{base}/projects"
       when 'dependency_files'
-        "#{base}/profiles/#{Gemnasium.config.profile_name}/projects/#{Gemnasium.config.project_name}/dependency_files"
+        "#{base}/projects/#{Gemnasium.config.project_slug}/dependency_files"
       else
         raise "No API path found for #{item}"
       end

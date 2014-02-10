@@ -14,6 +14,19 @@ shared_examples_for 'an installed file' do
   end
 end
 
+shared_examples_for 'a command that requires a compatible config file' do
+  context 'with an old configuration file' do
+    before { stub_config(needs_to_migrate?: true) }
+
+    it 'quits the program' do
+      expect{ Gemnasium.push({ project_path: project_path }) }.to raise_error { |e|
+        expect(e).to be_kind_of SystemExit
+        expect(error_output).to include 'Your configuration file is not compatible with this version. Please run the `migrate` command first.'
+      }
+    end
+  end
+end
+
 describe Gemnasium do
   let(:output) { [] }
   let(:error_output) { [] }
@@ -26,6 +39,9 @@ describe Gemnasium do
   end
 
   describe 'push' do
+
+    it_should_behave_like 'a command that requires a compatible config file'
+
     context 'on a non tracked branch' do
       before { Gemnasium.stub(:current_branch).and_return('non_project_branch') }
 
@@ -39,6 +55,19 @@ describe Gemnasium do
 
     context 'on the tracked branch' do
       before { Gemnasium.stub(:current_branch).and_return('master') }
+
+      context 'with no project slug' do
+        before do
+          stub_config({ project_slug: nil })
+        end
+
+        it 'quit the program with an error' do
+          expect{ Gemnasium.push({ project_path: project_path }) }.to raise_error { |e|
+            expect(e).to be_kind_of SystemExit
+            expect(error_output).to include 'Project slug not defined. Please create a new project or "resolve" the name of an existing project.'
+          }
+        end
+      end
 
       context 'with no supported dependency files found' do
         before { Gemnasium::DependencyFiles.stub(:get_sha1s_hash).and_return([]) }
@@ -57,7 +86,7 @@ describe Gemnasium do
 
         context 'for a gemnasium project already up-to-date' do
           before do
-            stub_config({ project_name: 'up_to_date_project' })
+            stub_config({ project_slug: 'up_to_date_project' })
             Gemnasium.push({ project_path: project_path })
           end
 
@@ -79,7 +108,7 @@ describe Gemnasium do
           end
 
           it 'makes a request to Gemnasium to get updated files to upload' do
-            expect(WebMock).to have_requested(:post, api_url('/api/v2/profiles/tech-angels/projects/gemnasium-gem/dependency_files/compare'))
+            expect(WebMock).to have_requested(:post, api_url('/api/v3/projects/existing-slug/dependency_files/compare'))
                     .with(:body => sha1_hash.to_json,
                           :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
           end
@@ -93,7 +122,7 @@ describe Gemnasium do
           end
 
           it 'makes a request to Gemnasium to upload needed files' do
-            expect(WebMock).to have_requested(:post, api_url('/api/v2/profiles/tech-angels/projects/gemnasium-gem/dependency_files/upload'))
+            expect(WebMock).to have_requested(:post, api_url('/api/v3/projects/existing-slug/dependency_files/upload'))
                     .with(:body => hash_to_upload.to_json,
                           :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
           end
@@ -119,46 +148,156 @@ describe Gemnasium do
   end
 
   describe 'create_project' do
-    context 'for an already existing project' do
-      before { stub_config({ project_name: 'existing_project' }) }
 
-      context 'without overwrite option' do
-        it 'quit the program with an error' do
-          expect{ Gemnasium.create_project({ project_path: project_path }) }.to raise_error { |e|
-            expect(e).to be_kind_of SystemExit
-            expect(error_output).to include "The project `#{Gemnasium.config.project_name}` already exists for the profile `#{Gemnasium.config.profile_name}`."
-          }
-        end
-      end
+    it_should_behave_like 'a command that requires a compatible config file'
 
-      context 'with overwrite option' do
-        before { Gemnasium.create_project({ project_path: project_path, overwrite_attr: true }) }
+    context 'with a project slug' do
+      before { stub_config({ project_slug: 'existing-slug' }) }
 
-        it 'issues the correct request' do
-          expect(WebMock).to have_requested(:post, api_url("/api/v2/profiles/tech-angels/projects"))
-              .with(:body => {name: "existing_project", branch: "master", overwrite_attributes: true},
-                    :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
-        end
-
-        it 'displays a confirmation message' do
-          expect(output).to include 'Project `existing_project` successfully created for tech-angels.'
-          expect(output).to include 'Remaining private slots for this profile: 9001'
-        end
+      it 'quit the program with an error' do
+        expect{ Gemnasium.create_project({ project_path: project_path }) }.to raise_error { |e|
+          expect(e).to be_kind_of SystemExit
+          expect(error_output).to include "You already have a project slug refering to an existing project. Please remove this project slug from your configuration file to create a new project."
+        }
       end
     end
 
-    context 'for an inexistant project' do
-      before { Gemnasium.create_project({ project_path: project_path }) }
+    context 'with no project slug' do
+      before { stub_config({ project_slug: nil }) }
 
       it 'issues the correct request' do
-        expect(WebMock).to have_requested(:post, api_url("/api/v2/profiles/tech-angels/projects"))
+        Gemnasium.create_project({ project_path: project_path })
+
+        expect(WebMock).to have_requested(:post, api_url("/api/v3/projects"))
             .with(:body => {name: "gemnasium-gem", branch: "master"},
                   :headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})
       end
 
       it 'displays a confirmation message' do
-        expect(output).to include 'Project `gemnasium-gemn` successfully created for tech-angels.'
-        expect(output).to include 'Remaining private slots for this profile: 9001'
+        Gemnasium.create_project({ project_path: project_path })
+
+        expect(output).to include 'Project `gemnasium-gem` successfully created.'
+        expect(output).to include 'Project slug is `new-slug`.'
+        expect(output).to include 'Remaining private slots: 9001'
+        expect(output).to include 'Your configuration file has been updated.'
+      end
+
+      it 'updates the configuration file' do
+        expect(Gemnasium.config).to receive(:store_value!)
+          .with(:project_slug, 'new-slug', "This unique project slug has been set by `gemnasium create`.")
+
+        Gemnasium.create_project({ project_path: project_path })
+      end
+    end
+
+    context 'with a read-only config file' do
+      before { stub_config({ project_slug: nil, writable?: false }) }
+      before { Gemnasium.create_project({ project_path: project_path }) }
+
+      it 'displays a confirmation message' do
+        expect(output).to include 'Project `gemnasium-gem` successfully created.'
+        expect(output).to include 'Project slug is `new-slug`.'
+        expect(output).to include 'Remaining private slots: 9001'
+        expect(output).to include 'Configuration file cannot be updated. Please edit the file and update the project slug manually.'
+      end
+    end
+  end
+
+  describe 'migrate' do
+
+    context 'when the config file needs a migration' do
+      before { stub_config({ needs_to_migrate?: true }) }
+
+      it 'notifies the user' do
+        Gemnasium.migrate({ project_path: project_path })
+        expect(output).to include "Your configuration has been updated."
+        expect(output).to include "Run `gemnasium resolve` if your config is related to an existing project."
+        expect(output).to include "Run `gemnasium create` if you want to create a new project on Gemnasium."
+      end
+
+      it 'updates the config file' do
+        expect(Gemnasium.config).to receive(:migrate!)
+        Gemnasium.migrate({ project_path: project_path })
+      end
+    end
+
+    context 'when the config file is already up-to-date' do
+      before do
+        stub_config({ needs_to_migrate?: false })
+        Gemnasium.migrate({ project_path: project_path })
+      end
+
+      it 'notifies the user' do
+        expect(output).to include "Your configuration file is already up-to-date."
+      end
+    end
+  end
+
+  describe 'resolve_project' do
+
+    it_should_behave_like 'a command that requires a compatible config file'
+
+    context 'with a project slug' do
+      before { stub_config({ project_slug: 'existing-slug' }) }
+
+      it 'quit the program with an error' do
+        expect{ Gemnasium.resolve_project({ project_path: project_path }) }.to raise_error { |e|
+          expect(e).to be_kind_of SystemExit
+          expect(error_output).to include "You already have a project slug refering to an existing project. Please remove this project slug from your configuration file."
+        }
+      end
+    end
+
+    context 'with no project slug' do
+      context 'with no candidate on the server' do
+        before { stub_config({ project_slug: nil,  project_name: 'no-candidate' }) }
+
+        it 'quit the program with an error' do
+          expect { Gemnasium.resolve_project({ project_path: project_path }) }.to raise_error { |e|
+            expect(e).to be_kind_of SystemExit
+            expect(error_output).to include "You have no off-line project matching name `no-candidate` and branch `master`."
+          }
+        end
+      end
+
+      context 'with one candidate on the server' do
+        before { stub_config({ project_slug: nil,  project_name: 'one-candidate' }) }
+
+        it 'displays a confirmation message' do
+          Gemnasium.resolve_project({ project_path: project_path })
+
+          expect(output).to include 'Project slug is `one-candidate-slug`.'
+          expect(output).to include 'Your configuration file has been updated.'
+        end
+
+        it 'updates the configuration file' do
+          expect(Gemnasium.config).to receive(:store_value!)
+            .with(:project_slug, 'one-candidate-slug',
+                  "This unique project slug has been set by `gemnasium resolve`.")
+
+          Gemnasium.resolve_project({ project_path: project_path })
+        end
+
+        context 'with a read-only config file' do
+          before { stub_config({ project_slug: nil,  project_name: 'one-candidate', writable?: false }) }
+          before { Gemnasium.resolve_project({ project_path: project_path }) }
+
+          it 'displays a confirmation message' do
+            expect(output).to include 'Project slug is `one-candidate-slug`.'
+            expect(output).to include 'Configuration file cannot be updated. Please edit the file and update the project slug manually.'
+          end
+        end
+      end
+
+      context 'with many candidates on the server' do
+        before { stub_config({ project_slug: nil, project_name: 'many-candidates' }) }
+
+        it 'quit the program with an error' do
+          expect{ Gemnasium.resolve_project({ project_path: project_path }) }.to raise_error { |e|
+            expect(e).to be_kind_of SystemExit
+            expect(error_output).to include "You have more than one off-line project matching name `many-candidates` and branch `master`."
+          }
+        end
       end
     end
   end
@@ -310,7 +449,6 @@ describe Gemnasium do
             expect(output).to include 'Usage:'
             expect(output).to include "\trake gemnasium:push \t\t- to push your dependency files"
             expect(output).to include "\trake gemnasium:create \t\t- to create your project on Gemnasium"
-            expect(output).to include "\trake gemnasium:create:force - to overwrite already existing Gemnasium project attributes"
           end
         end
 
@@ -340,7 +478,6 @@ describe Gemnasium do
               expect(output).to include 'Usage:'
               expect(output).to include "\trake gemnasium:push \t\t- to push your dependency files"
               expect(output).to include "\trake gemnasium:create \t\t- to create your project on Gemnasium"
-              expect(output).to include "\trake gemnasium:create:force - to overwrite already existing Gemnasium project attributes"
             end
           end
         end

@@ -37,11 +37,11 @@ describe Gemnasium::Connection do
     end
 
     context 'projects API path' do
-      it{ expect(connection.api_path_for('projects')).to eql "/api/#{Gemnasium.config.api_version}/profiles/#{Gemnasium.config.profile_name}/projects" }
+      it{ expect(connection.api_path_for('projects')).to eql "/api/#{Gemnasium.config.api_version}/projects" }
     end
 
     context 'dependency files API path' do
-      it{ expect(connection.api_path_for('dependency_files')).to eql "/api/#{Gemnasium.config.api_version}/profiles/#{Gemnasium.config.profile_name}/projects/#{Gemnasium.config.project_name}/dependency_files" }
+      it{ expect(connection.api_path_for('dependency_files')).to eql "/api/#{Gemnasium.config.api_version}/projects/#{Gemnasium.config.project_slug}/dependency_files" }
     end
   end
 end

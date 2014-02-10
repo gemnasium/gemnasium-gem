@@ -5,16 +5,12 @@ module Gemnasium
     end
   end
   class DeprecatedApiVersionError < StandardError; end
-  # Profile errors
-  class ProfileNotFoundError < StandardError; end
-  class ProfileNotOwnedError < StandardError; end
+  class MalformedRequestError < StandardError; end
+  class MissingParamsError < StandardError; end
+  class NonBillableUserError < StandardError; end
   class NoSlotsAvailableError < StandardError; end
-  # Project errors
   class ProjectNotFoundError < StandardError; end
-  class ProjectNotCreatedError < StandardError; end
+  class ProjectNotOfflineError < StandardError; end
   class ProjectParamMissingError < StandardError; end
-  class ProjectAlreadyExistsError < StandardError; end
-  class ProjectGithubSyncedError < StandardError; end
-  class ProjectBranchMismatchError < StandardError; end
-  class ProjectIsPublicError < StandardError; end
+  class UnsupportedDependencyFilesError < StandardError; end
 end

@@ -21,7 +21,7 @@ Feature: Help messages about gemnasium gem
     When I run `gemnasium <option>`
     Then the output should contain exactly:
       """
-      gemnasium v2.0.1\n
+      gemnasium v3.0.0\n
       """
     And the exit status should be 0
 
@@ -42,6 +42,8 @@ Feature: Help messages about gemnasium gem
         create   :   Create or update project on Gemnasium
         install  :   Install the necessary config file
         push     :   Push your dependency files to Gemnasium
+        migrate  :   Migrate the configuration file
+        resolve  :   Resolve project name to an existing project on Gemnasium
 
       See `gemnasium COMMAND --help` for more information on a specific command.\n
       """

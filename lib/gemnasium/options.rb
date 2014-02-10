@@ -27,6 +27,8 @@ Available commands are:
   create   :   Create or update project on Gemnasium
   install  :   Install the necessary config file
   push     :   Push your dependency files to Gemnasium
+  migrate  :   Migrate the configuration file
+  resolve  :   Resolve project name to an existing project on Gemnasium
 
 See `gemnasium COMMAND --help` for more information on a specific command.
         HELP_MESSAGE
@@ -35,10 +37,6 @@ See `gemnasium COMMAND --help` for more information on a specific command.
       subcommands = {
         'create'  => OptionParser.new do |opts|
           opts.banner = 'Usage: gemnasium create [options]'
-
-          opts.on('--force', "Force overwriting project's attributes if it already exists") do
-            options[:overwrite_attr] = true
-          end
 
           opts.on '-h', '--help', 'Display this message' do
             options[:show_help] = true
@@ -61,6 +59,20 @@ See `gemnasium COMMAND --help` for more information on a specific command.
         end,
         'push'    => OptionParser.new do |opts|
           opts.banner = 'Usage: gemnasium push'
+
+          opts.on '-h', '--help', 'Display this message' do
+            options[:show_help] = true
+          end
+        end,
+        'migrate'  => OptionParser.new do |opts|
+          opts.banner = 'Usage: gemnasium migrate [options]'
+
+          opts.on '-h', '--help', 'Display this message' do
+            options[:show_help] = true
+          end
+        end,
+        'resolve'  => OptionParser.new do |opts|
+          opts.banner = 'Usage: gemnasium resolve [options]'
 
           opts.on '-h', '--help', 'Display this message' do
             options[:show_help] = true
