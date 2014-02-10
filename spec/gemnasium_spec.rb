@@ -40,7 +40,7 @@ describe Gemnasium do
 
   describe 'push' do
 
-    # it_should_behave_like 'a command that requires a compatible config file'
+    it_should_behave_like 'a command that requires a compatible config file'
 
     context 'on a non tracked branch' do
       before { Gemnasium.stub(:current_branch).and_return('non_project_branch') }
@@ -149,7 +149,7 @@ describe Gemnasium do
 
   describe 'create_project' do
 
-    # it_should_behave_like 'a command that requires a compatible config file'
+    it_should_behave_like 'a command that requires a compatible config file'
 
     context 'with a project slug' do
       before { stub_config({ project_slug: 'existing-slug' }) }
@@ -235,7 +235,7 @@ describe Gemnasium do
 
   describe 'resolve_project' do
 
-    # it_should_behave_like 'a command that requires a compatible config file'
+    it_should_behave_like 'a command that requires a compatible config file'
 
     context 'with a project slug' do
       before { stub_config({ project_slug: 'existing-slug' }) }
