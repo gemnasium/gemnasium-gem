@@ -152,6 +152,8 @@ module Gemnasium
       if @config.needs_to_migrate?
         @config.migrate!
         notify "Your configuration has been updated.", :green
+        notify "Run `gemnasium resolve` if your config is related to existing project.", :blue
+        notify "Run `gemnasium create` if you want to create a new project on Gemnasium.", :blue
       else
         notify "Your configuration file is already up-to-date.", :green
       end

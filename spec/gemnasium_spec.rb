@@ -211,6 +211,8 @@ describe Gemnasium do
       it 'notifies the user' do
         Gemnasium.migrate({ project_path: project_path })
         expect(output).to include "Your configuration has been updated."
+        expect(output).to include "Run `gemnasium resolve` if your config is related to existing project."
+        expect(output).to include "Run `gemnasium create` if you want to create a new project on Gemnasium."
       end
 
       it 'updates the config file' do
