@@ -49,7 +49,7 @@ describe Gemnasium do
         it 'quit the program with an error' do
           expect{ Gemnasium.push({ project_path: project_path }) }.to raise_error { |e|
             expect(e).to be_kind_of SystemExit
-            expect(error_output).to include "Project slug not defined. Please create a new project or set the slug of your exisiting project in your configuration file."
+            expect(error_output).to include 'Project slug not defined. Please create a new project or "resolve" the name of an existing project.'
           }
         end
       end
@@ -181,6 +181,73 @@ describe Gemnasium do
         expect(output).to include 'Project slug is `new-slug`.'
         expect(output).to include 'Remaining private slots: 9001'
         expect(output).to include 'Configuration file cannot be updated. Please edit the file and update the project slug manually.'
+      end
+    end
+  end
+
+  describe 'resolve_project' do
+
+    context 'with a project slug' do
+      before { stub_config({ project_slug: 'existing-slug' }) }
+
+      it 'quit the program with an error' do
+        expect{ Gemnasium.resolve_project({ project_path: project_path }) }.to raise_error { |e|
+          expect(e).to be_kind_of SystemExit
+          expect(error_output).to include "You already have a project slug refering to an existing project. Please remove this project slug from your configuration file."
+        }
+      end
+    end
+
+    context 'with no project slug' do
+      context 'with no candidate on the server' do
+        before { stub_config({ project_slug: '',  project_name: 'no-candidate' }) }
+
+        it 'quit the program with an error' do
+          expect { Gemnasium.resolve_project({ project_path: project_path }) }.to raise_error { |e|
+            expect(e).to be_kind_of SystemExit
+            expect(error_output).to include "You have no off-line project matching name `no-candidate` and branch `master`."
+          }
+        end
+      end
+
+      context 'with one candidate on the server' do
+        before { stub_config({ project_slug: '',  project_name: 'one-candidate' }) }
+
+        it 'displays a confirmation message' do
+          Gemnasium.resolve_project({ project_path: project_path })
+
+          expect(output).to include 'Project slug is `one-candidate-slug`.'
+          expect(output).to include 'Your configuration file has been updated.'
+        end
+
+        it 'updates the configuration file' do
+          expect(Gemnasium.config).to receive(:store_value!)
+            .with(:project_slug, 'one-candidate-slug',
+                  "This unique project slug has been set by `gemnasium resolve`.")
+
+          Gemnasium.resolve_project({ project_path: project_path })
+        end
+
+        context 'with a read-only config file' do
+          before { stub_config({ project_slug: '',  project_name: 'one-candidate', writable?: false }) }
+          before { Gemnasium.resolve_project({ project_path: project_path }) }
+
+          it 'displays a confirmation message' do
+            expect(output).to include 'Project slug is `one-candidate-slug`.'
+            expect(output).to include 'Configuration file cannot be updated. Please edit the file and update the project slug manually.'
+          end
+        end
+      end
+
+      context 'with many candidates on the server' do
+        before { stub_config({ project_slug: '', project_name: 'many-candidates' }) }
+
+        it 'quit the program with an error' do
+          expect{ Gemnasium.resolve_project({ project_path: project_path }) }.to raise_error { |e|
+            expect(e).to be_kind_of SystemExit
+            expect(error_output).to include "You have more than one off-line project matching name `many-candidates` and branch `master`."
+          }
+        end
       end
     end
   end

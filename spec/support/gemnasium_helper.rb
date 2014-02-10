@@ -56,6 +56,25 @@ def stub_requests
                      :body => '{ "name": "gemnasium-gem", "slug": "new-slug", "remaining_slot_count": 9001 }',
                      :headers => response_headers)
 
+  # Index requests
+  #
+  # search: offline project, master branch
+  # no-candidate: github project, no match
+  # one-candidate: one project for master branch, another for dev branch, one match
+  # many-candidates: 2 projects matching master branch, 2 matches
+  #
+  stub_request(:get, api_url("/api/#{config.api_version}/projects"))
+          .with(:headers => request_headers)
+          .to_return(:status => 200, :headers => response_headers,
+                     :body => '[
+{"slug":"no-candidate-slug","name":"no-candidate","origin":"github","branch":"master","private":false},
+{"slug":"one-candidate-slug","name":"one-candidate","origin":"offline","branch":"master","private":true},
+{"slug":"one-candidate-slug-dev","name":"one-candidate","origin":"offline","branch":"dev","private":true},
+{"slug":"many-candidates-slug-1","name":"many-candidates","origin":"offline","branch":"master","private":false},
+{"slug":"many-candidates-slug-2","name":"many-candidates","origin":"offline","branch":"master","private":false}
+]'
+                    )
+
   # Connection model's test requests
   stub_request(:get, api_url('/test_path'))
           .with(:headers => {'Accept'=>'application/json', 'Content-Type'=>'application/json'})

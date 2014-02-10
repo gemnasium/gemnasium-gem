@@ -98,6 +98,15 @@ describe Gemnasium::Options do
           end
         end
       end
+
+      context '`resolve`' do
+        context 'with no options' do
+          it 'correctly set the options' do
+            options, parser = Gemnasium::Options.parse ['resolve']
+            expect(options).to eql({ command: 'resolve' })
+          end
+        end
+      end
     end
   end
 end

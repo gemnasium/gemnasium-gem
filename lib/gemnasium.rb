@@ -18,7 +18,7 @@ module Gemnasium
       end
 
       if @config.project_slug.empty?
-        quit_because_of("Project slug not defined. Please create a new project or set the slug of your exisiting project in your configuration file.")
+        quit_because_of('Project slug not defined. Please create a new project or "resolve" the name of an existing project.')
       end
 
       dependency_files_hashes = DependencyFiles.get_sha1s_hash(options[:project_path])
@@ -101,6 +101,7 @@ module Gemnasium
             notify 'Usage:', :blue
             notify "\trake gemnasium:push \t\t- to push your dependency files", :blue
             notify "\trake gemnasium:create \t\t- to create your project on Gemnasium", :blue
+            notify "\trake gemnasium:resolve \t\t- to resolve the project name to an existing project", :blue
           end
         end
       end
@@ -136,6 +137,51 @@ module Gemnasium
     rescue => exception
       quit_because_of(exception.message)
     end
+
+    # Find and store the project slug matching the given project name.
+    #
+    # @param options [Hash] Parsed options from the command line. Options supported:
+    #             * :project_path       - Path to the project (required)
+    #
+    def resolve_project options
+      @config = load_config(options[:project_path])
+
+      # REFACTOR: similar code in #create_project
+      unless @config.project_slug.empty?
+        quit_because_of("You already have a project slug refering to an existing project. Please remove this project slug from your configuration file.")
+      end
+
+      project_name =  @config.project_name
+      project_branch =  @config.project_branch || 'master'
+      projects = request("#{connection.api_path_for('projects')}")
+
+      candidates = projects.select do |project|
+        project['name'] == project_name && project['origin'] == 'offline' && project['branch'] == project_branch
+      end
+
+      criterias = "name `#{ project_name }` and branch `#{ project_branch }`"
+      if candidates.size == 0
+        quit_because_of("You have no off-line project matching #{ criterias }.")
+      elsif candidates.size > 1
+        quit_because_of("You have more than one off-line project matching #{ criterias }.")
+      end
+
+      project = candidates.first
+      project_slug = project['slug']
+      notify "Project slug is `#{ project_slug }`.", :green
+
+      # REFACTOR: similar code in #create_project
+      if @config.writable?
+        @config.store_value!(:project_slug, project_slug, "This unique project slug has been set by `gemnasium resolve`.")
+        notify "Your configuration file has been updated."
+      else
+        notify "Configuration file cannot be updated. Please edit the file and update the project slug manually."
+      end
+
+    rescue => exception
+      quit_because_of(exception.message)
+    end
+
 
     def config
       @config || quit_because_of('No configuration file loaded')
