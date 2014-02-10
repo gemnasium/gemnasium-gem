@@ -44,13 +44,13 @@ module Gemnasium
     # @param comment [String] optional comment
     #
     def store_value!(key, value, comment = nil)
-      pattern = /\A:#{ key }:.*\Z/
-      new_line = ":#{ key }: #{ value }"
+      pattern = /\A#{ key }:.*\Z/
+      new_line = "#{ key }: #{ value }"
       new_line += " # #{ comment }" if comment
 
       content = File.readlines(path).map do |line|
-        line.strip.sub pattern, new_line
-      end.join("\n")
+        line.rstrip.sub pattern, new_line
+      end.join("\n") + "\n"
 
       File.write path, content
     end
@@ -73,8 +73,8 @@ module Gemnasium
 
     def remove_key!(key)
       content = File.readlines(path).reject do |line|
-        line =~ /\A:#{ key }:.*\Z/
-      end.map{ |l| l.strip }.join("\n")
+        line =~ /\A#{ key }:.*\Z/
+      end.map{ |l| l.rstrip }.join("\n") + "\n"
 
       File.write path, content
     end
