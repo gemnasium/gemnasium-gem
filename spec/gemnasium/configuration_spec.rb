@@ -9,32 +9,44 @@ describe Gemnasium::Configuration do
     it { expect(Gemnasium::Configuration::DEFAULT_CONFIG['ignored_paths']).to eql [] }
   end
 
-  describe 'initialize' do
-    let(:config_file_path) { 'tmp/config.yml' }
+  let(:config_file_path) { 'tmp/config.yml' }
+  let(:config) { described_class.new File.expand_path(config_file_path) }
 
+  let(:config_options) do
+    {
+      api_key: 'api_key',
+      project_name: 'gemnasium-gem',
+      project_branch: 'master',
+      ignored_paths: ['spec/','tmp/*.lock', '*.gemspec']
+    }
+  end
+
+  def write_config_file
+    File.open(config_file_path, 'w+') { |f| f.write(config_options.to_yaml) }
+  end
+
+  after do
+    File.delete(config_file_path) if File.exist?(config_file_path)
+  end
+
+  describe 'initialize' do
     context 'for an inexistant config file' do
       it { expect { Gemnasium::Configuration.new File.expand_path(config_file_path) }.to raise_error Errno::ENOENT }
     end
 
     context 'for a config file that does exist' do
       before { FileUtils.touch(config_file_path) }
-      after { File.delete(config_file_path) }
 
       context 'with missing mandatory values' do
         let(:config_options) {{ project_name: 'gemnasium-gem' }}
-        before do
-          File.open(config_file_path, 'w+') { |f| f.write(config_options.to_yaml) }
-        end
+        before { write_config_file }
 
           it { expect { Gemnasium::Configuration.new File.expand_path(config_file_path) }.to raise_error('Your configuration file does not contain all mandatory parameters or contain invalid values. Please check the documentation.') }
       end
 
       context 'with all mandatory values' do
         let(:config_options) {{ api_key: 'api_key', project_name: 'gemnasium-gem', project_branch: 'master', ignored_paths: ['spec/','tmp/*.lock', '*.gemspec'] }}
-        before do
-          File.open(config_file_path, 'w+') { |f| f.write(config_options.to_yaml) }
-        end
-        let(:config) { Gemnasium::Configuration.new File.expand_path(config_file_path) }
+        before { write_config_file }
 
         it { expect(config.api_key).to eql config_options[:api_key] }
 
@@ -50,6 +62,11 @@ describe Gemnasium::Configuration do
         it { expect(config.ignored_paths).to include Regexp.new("^spec/") }
         it { expect(config.ignored_paths).to include Regexp.new("^tmp/[^/]+\\.lock") }
         it { expect(config.ignored_paths).to include Regexp.new("^[^\/]+\\.gemspec") }
+      end
+    end
+  end
+
+  # FIXME: bad indentation
 
         pending "writable?"
 
@@ -57,9 +74,12 @@ describe Gemnasium::Configuration do
           context "with a new value for an existing key" do
             let(:key) { :project_name }
             let(:value) { 'new-name' }
+
+            # HACK: fake config reload
             let(:new_config) { Gemnasium::Configuration.new File.expand_path(config_file_path) }
 
             before do
+              write_config_file
               config.store_value! key, value, "my project name"
             end
 
@@ -78,7 +98,61 @@ describe Gemnasium::Configuration do
             end
           end
         end
+
+  describe "#migrate!" do
+    before { write_config_file }
+    subject { config.needs_to_migrate? }
+
+    context "with NO profile_name key" do
+      let(:config_options) do
+        {
+          api_key: 'api_key',
+          project_name: 'gemnasium-gem',
+          project_branch: 'master'
+          # no profile_name
+        }
       end
+
+      it { should be false }
+    end
+
+    context "with profile_name key" do
+      let(:config_options) do
+        {
+          project_name: 'gemnasium-gem',
+          profile_name: 'tech-angels',
+          api_key: '1337'
+        }
+      end
+
+      it { should be true }
+    end
+  end
+
+  describe "#migrate!" do
+    before { write_config_file }
+
+    let(:config_options) do
+      {
+        project_name: 'gemnasium-gem',
+        profile_name: 'tech-angels',
+        api_key: '1337'
+      }
+    end
+
+    # HACK: fake config reload
+    let(:new_config) { Gemnasium::Configuration.new File.expand_path(config_file_path) }
+
+    it "removes the profile_name" do
+      expect(config.profile_name).to eql 'tech-angels'
+      config.migrate!
+      expect(new_config.profile_name).to eql nil
+    end
+
+    it "preserves the other keys" do
+      config.migrate!
+      expect(new_config.project_name).to eql 'gemnasium-gem'
+      expect(new_config.api_key).to eql '1337'
     end
   end
 end

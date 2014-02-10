@@ -59,9 +59,25 @@ module Gemnasium
       File.writable? path
     end
 
+    def needs_to_migrate?
+      !profile_name.nil?
+    end
+
+    def migrate!
+      remove_key!(:profile_name)
+    end
+
     private
 
     attr_reader :path
+
+    def remove_key!(key)
+      content = File.readlines(path).reject do |line|
+        line =~ /\A:#{ key }:.*\Z/
+      end.map{ |l| l.strip }.join("\n")
+
+      File.write path, content
+    end
 
     # Check that mandatory parameters are not nil and contain valid values
     #
