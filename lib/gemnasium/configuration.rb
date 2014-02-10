@@ -64,20 +64,21 @@ module Gemnasium
     end
 
     def migrate!
-      remove_key!(:profile_name)
+      # replace profile_name key with project_slug key (no value)
+      content = File.readlines(path).map do |line|
+        if line =~ /\Aprofile_name:.*\Z/
+          "project_slug:"
+        else
+          line
+        end
+      end.map{ |l| l.rstrip }.join("\n") + "\n"
+
+      File.write path, content
     end
 
     private
 
     attr_reader :path
-
-    def remove_key!(key)
-      content = File.readlines(path).reject do |line|
-        line =~ /\A#{ key }:.*\Z/
-      end.map{ |l| l.rstrip }.join("\n") + "\n"
-
-      File.write path, content
-    end
 
     # Check that mandatory parameters are not nil and contain valid values
     #

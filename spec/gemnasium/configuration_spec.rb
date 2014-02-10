@@ -22,7 +22,12 @@ describe Gemnasium::Configuration do
   end
 
   def write_config_file
-    File.open(config_file_path, 'w+') { |f| f.write(config_options.to_yaml) }
+    config_hash = config_options.reduce({}) do |memo, (key,value)|
+      memo ||= {}
+      memo[key.to_s] = value
+      memo
+    end
+    File.open(config_file_path, 'w+') { |f| f.write(config_hash.to_yaml) }
   end
 
   after do
@@ -92,7 +97,7 @@ describe Gemnasium::Configuration do
 
       it "stores the given comment" do
         content = File.read File.expand_path(config_file_path)
-        expect(content).to match /:project_name:.*# my project name/
+        expect(content).to match /project_name:.*# my project name/
       end
     end
   end
@@ -145,6 +150,14 @@ describe Gemnasium::Configuration do
       expect(config.profile_name).to eql 'tech-angels'
       config.migrate!
       expect(new_config.profile_name).to eql nil
+    end
+
+    it "adds an empty project_slug" do
+      config.migrate!
+      expect(new_config.project_slug).to eql nil
+
+      content = File.read File.expand_path(config_file_path)
+      expect(content).to match /^project_slug:$/
     end
 
     it "preserves the other keys" do
