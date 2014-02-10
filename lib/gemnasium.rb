@@ -18,7 +18,7 @@ module Gemnasium
         quit_because_of("Gemnasium : Dependency files updated but not on tracked branch (#{@config.project_branch}), ignoring...\n")
       end
 
-      if @config.project_slug.nil?
+      unless has_project_slug?
         quit_because_of('Project slug not defined. Please create a new project or "resolve" the name of an existing project.')
       end
 
@@ -117,7 +117,7 @@ module Gemnasium
       @config = load_config(options[:project_path])
       ensure_config_is_up_to_date!
 
-      unless @config.project_slug.empty?
+      if has_project_slug?
         quit_because_of("You already have a project slug refering to an existing project. Please remove this project slug from your configuration file to create a new project.")
       end
 
@@ -169,7 +169,7 @@ module Gemnasium
       ensure_config_is_up_to_date!
 
       # REFACTOR: similar code in #create_project
-      unless @config.project_slug.empty?
+      if has_project_slug?
         quit_because_of("You already have a project slug refering to an existing project. Please remove this project slug from your configuration file.")
       end
 
@@ -210,6 +210,10 @@ module Gemnasium
     end
 
     private
+
+    def has_project_slug?
+      !@config.project_slug.nil?
+    end
 
     # Quit with an error message if the config file needs a migration.
     #

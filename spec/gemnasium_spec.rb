@@ -163,7 +163,7 @@ describe Gemnasium do
     end
 
     context 'with no project slug' do
-      before { stub_config({ project_slug: '' }) }
+      before { stub_config({ project_slug: nil }) }
 
       it 'issues the correct request' do
         Gemnasium.create_project({ project_path: project_path })
@@ -191,7 +191,7 @@ describe Gemnasium do
     end
 
     context 'with a read-only config file' do
-      before { stub_config({ project_slug: '', writable?: false }) }
+      before { stub_config({ project_slug: nil, writable?: false }) }
       before { Gemnasium.create_project({ project_path: project_path }) }
 
       it 'displays a confirmation message' do
@@ -250,7 +250,7 @@ describe Gemnasium do
 
     context 'with no project slug' do
       context 'with no candidate on the server' do
-        before { stub_config({ project_slug: '',  project_name: 'no-candidate' }) }
+        before { stub_config({ project_slug: nil,  project_name: 'no-candidate' }) }
 
         it 'quit the program with an error' do
           expect { Gemnasium.resolve_project({ project_path: project_path }) }.to raise_error { |e|
@@ -261,7 +261,7 @@ describe Gemnasium do
       end
 
       context 'with one candidate on the server' do
-        before { stub_config({ project_slug: '',  project_name: 'one-candidate' }) }
+        before { stub_config({ project_slug: nil,  project_name: 'one-candidate' }) }
 
         it 'displays a confirmation message' do
           Gemnasium.resolve_project({ project_path: project_path })
@@ -279,7 +279,7 @@ describe Gemnasium do
         end
 
         context 'with a read-only config file' do
-          before { stub_config({ project_slug: '',  project_name: 'one-candidate', writable?: false }) }
+          before { stub_config({ project_slug: nil,  project_name: 'one-candidate', writable?: false }) }
           before { Gemnasium.resolve_project({ project_path: project_path }) }
 
           it 'displays a confirmation message' do
@@ -290,7 +290,7 @@ describe Gemnasium do
       end
 
       context 'with many candidates on the server' do
-        before { stub_config({ project_slug: '', project_name: 'many-candidates' }) }
+        before { stub_config({ project_slug: nil, project_name: 'many-candidates' }) }
 
         it 'quit the program with an error' do
           expect{ Gemnasium.resolve_project({ project_path: project_path }) }.to raise_error { |e|
