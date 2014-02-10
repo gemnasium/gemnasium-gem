@@ -18,7 +18,7 @@ module Gemnasium
         quit_because_of("Gemnasium : Dependency files updated but not on tracked branch (#{@config.project_branch}), ignoring...\n")
       end
 
-      if @config.project_slug.empty?
+      if @config.project_slug.nil?
         quit_because_of('Project slug not defined. Please create a new project or "resolve" the name of an existing project.')
       end
 

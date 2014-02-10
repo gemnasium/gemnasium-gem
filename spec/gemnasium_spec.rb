@@ -58,7 +58,7 @@ describe Gemnasium do
 
       context 'with no project slug' do
         before do
-          stub_config({ project_slug: '' })
+          stub_config({ project_slug: nil })
         end
 
         it 'quit the program with an error' do
