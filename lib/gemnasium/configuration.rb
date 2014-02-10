@@ -23,7 +23,7 @@ module Gemnasium
       end
       @path = config_file
 
-      config_hash = DEFAULT_CONFIG.merge!(YAML.load_file(config_file))
+      config_hash = DEFAULT_CONFIG.merge(YAML.load_file(config_file))
       config_hash.each do |k, v|
         writer_method = "#{k}="
         if respond_to?(writer_method)
