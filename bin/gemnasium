@@ -33,6 +33,10 @@ when 'install'
   Gemnasium.install options
 when 'push'
   Gemnasium.push options
+when 'migrate'
+  Gemnasium.migrate options
+when 'resolve'
+  Gemnasium.resolve_project options
 else
   $stdout.puts "Please see `gemnasium --help` for valid options"
   exit
