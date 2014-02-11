@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SUPPORTED_COMMITED_FILES=$((git diff --name-only HEAD~ HEAD 2>/dev/null || git diff-tree -r --no-commit-id --name-only --root HEAD) | grep '^\(Gemfile\|Gemfile\.lock\|.*\.gemspec\|package\.json\|npm-shrinkwrap\.json\)$')
+SUPPORTED_COMMITED_FILES=$((git diff --name-only HEAD~ HEAD 2>/dev/null || git diff-tree -r --no-commit-id --name-only --root HEAD) | grep '^\(Gemfile\|Gemfile\.lock\|.*\.gemspec\|package\.json\|npm-shrinkwrap\.json\|setup\.py\|requirements\.txt\|requires\.txt\|composer\.json\|composer\.lock\)$')
 
 if [[ $SUPPORTED_COMMITED_FILES > 0 ]]; then
   gemnasium push

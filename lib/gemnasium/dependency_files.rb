@@ -3,7 +3,7 @@ require 'digest/sha1'
 module Gemnasium
   class DependencyFiles
 
-    SUPPORTED_DEPENDENCY_FILES = /(Gemfile|Gemfile\.lock|.*\.gemspec|package\.json|npm-shrinkwrap\.json)$/
+    SUPPORTED_DEPENDENCY_FILES = /(Gemfile|Gemfile\.lock|.*\.gemspec|package\.json|npm-shrinkwrap\.json|setup\.py|requirements\.txt|requires\.txt|composer\.json|composer\.lock)$/
 
     # Get a Hash of sha1s for each file corresponding to the regex
     #

@@ -3,7 +3,7 @@ require './lib/gemnasium/version'
 Gem::Specification.new do |gem|
   gem.authors       = ["Tech-Angels"]
   gem.email         = ["contact@tech-angels.com"]
-  gem.description   = "Safely upload your dependency files (Gemfile, Gemfile.lock, *.gemspec, package.json, npm-shrinkwrap.json) on gemnasium.com to track dependencies and get notified about updates and security advisories."
+  gem.description   = "Safely upload your dependency files on gemnasium.com to track dependencies and get notified about updates and security advisories."
   gem.summary       = gem.description
   gem.homepage      = "https://gemnasium.com/"
   gem.license       = 'MIT'

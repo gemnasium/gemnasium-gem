@@ -8,11 +8,10 @@ Gemnasium app offers Github integration with fully automated synchronization but
 
 Supported dependency files are:
 
-* `Gemfile`
-* `Gemfile.lock`
-* `*.gemspec`
-* `package.json`
-* `npm-shrinkwrap.json`
+* Ruby: `Gemfile`, `Gemfile.lock` and `*.gemspec`
+* NPM: `package.json` and `npm-shrinkwrap.json`
+* Pyton: `requirements.txt`, `setup.py` and `requires.txt`
+* PHP Composer: `composer.json` and `composer.lock`
 
 ## Installation
 
