@@ -11,7 +11,7 @@ Then /^it should create the config file$/ do
   steps %{
     Then the output should match:
       """
-      File created in .*\/config\/gemnasium\.yml\.
+      File created in .*\/config\/gemnasium\.yml
       Please fill configuration file with accurate values\.
       """
     And a file named "config/gemnasium.yml" should exist
@@ -21,7 +21,7 @@ Then /^it should create the post-commit hook$/ do
   steps %{
     Then the output should match:
       """
-      File created in .*\/.git\/hooks\/post-commit\.
+      File created in .*\/.git\/hooks\/post-commit
       """
     And a file named ".git/hooks/post-commit" should exist
   }
@@ -30,7 +30,7 @@ Then /^it should create the task file$/ do
   steps %{
     Then the output should match:
       """
-      File created in .*\/lib\/tasks\/gemnasium.rake.
+      File created in .*\/lib\/tasks\/gemnasium.rake
       """
     And the output should contain:
       """
