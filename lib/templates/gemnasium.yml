@@ -1,6 +1,6 @@
-api_key: api_key_goes_here    # You personal (secret) API key. Get it at https://gemnasium.com/settings/api_access
+api_key: api_key_goes_here    # You personal (secret) API key. Get it at https://staging-gemnasium.tech-angels.net/settings#api_key
 project_name: project_name    # A name to remember your project.
-project_slug:                 # Unique slug for this project. Get it on the "project settings" page.
+project_slug:                 # Unique slug for this project. Get it on the "settings" page of your project or run "gemnasium resolve".
 project_branch: master        # /!\ If you don't use git, remove this line
 ignored_paths:                # Paths you want to ignore when searching for dependency files (from app root)
   - features/
