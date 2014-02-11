@@ -10,7 +10,7 @@ shared_examples_for 'an installed file' do
   end
 
   it 'informs the user that the file has been created' do
-    expect(output).to include "File created in #{target_path}."
+    expect(output).to include "File created in #{target_path}"
   end
 end
 
@@ -48,7 +48,7 @@ describe Gemnasium do
       it 'quit the program' do
         expect{ Gemnasium.push({ project_path: project_path }) }.to raise_error { |e|
           expect(e).to be_kind_of SystemExit
-          expect(error_output).to include "Gemnasium : Dependency files updated but not on tracked branch (master), ignoring...\n"
+          expect(error_output).to include "Dependency files updated but not on tracked branch (master), ignoring...\n"
         }
       end
     end

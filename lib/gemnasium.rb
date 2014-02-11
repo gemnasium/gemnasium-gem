@@ -15,7 +15,7 @@ module Gemnasium
       ensure_config_is_up_to_date!
 
       unless current_branch == @config.project_branch
-        quit_because_of("Gemnasium : Dependency files updated but not on tracked branch (#{@config.project_branch}), ignoring...\n")
+        quit_because_of("Dependency files updated but not on tracked branch (#{@config.project_branch}), ignoring...\n")
       end
 
       unless has_project_slug?
@@ -307,7 +307,7 @@ module Gemnasium
         FileUtils.cp template_file, target_path
 
         if File.exists? target_path
-          notify "File created in #{target_path}.", :green
+          notify "File created in #{target_path}", :green
 
           return true
         else
