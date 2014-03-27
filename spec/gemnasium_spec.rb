@@ -51,6 +51,21 @@ describe Gemnasium do
           expect(error_output).to include "Dependency files updated but not on tracked branch (master), ignoring...\n"
         }
       end
+
+      context 'with supported dependency files for gemnasium project not up-to-date' do
+        let(:sha1_hash) {{ 'new_gemspec.gemspec' => 'gemspec_sha1_hash', 'modified_lockfile.lock' => 'lockfile_sha1_hash', 'Gemfile_unchanged.lock' => 'gemfile_sha1_hash' }}
+        let(:hash_to_upload) {[{ filename: 'new_gemspec.gemspec', sha: 'gemspec_sha1_hash', content: 'stubbed gemspec content' },
+                              { filename: 'modified_lockfile.lock', sha: 'lockfile_sha1_hash', content: 'stubbed lockfile content' }]}
+
+        before do
+          Gemnasium::DependencyFiles.stub(:get_sha1s_hash).and_return(sha1_hash)
+          Gemnasium::DependencyFiles.stub(:get_content_to_upload).and_return(hash_to_upload)
+        end
+
+        it 'should not quit the program when :ignore_branch is true' do
+          expect{ Gemnasium.push({ project_path: project_path, ignore_branch: true }) }.to_not raise_error
+        end
+      end
     end
 
     context 'on the tracked branch' do
