@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.executables   = ["gemnasium"]
   gem.version       = Gemnasium::VERSION
 
-  gem.add_development_dependency 'rake', '~>10.0.3'
+  gem.add_development_dependency 'rake', '~>10.3.1'
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'cucumber'
   gem.add_development_dependency 'aruba'
