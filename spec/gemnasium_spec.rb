@@ -2,7 +2,7 @@ require 'spec_helper'
 
 shared_examples_for 'an installed file' do
   it 'creates the configuration file' do
-    expect(File.exists? target_path).to be_true
+    expect(File.exists? target_path).to be_truthy
     # Test that the files are identical comparing their MD5 hashes
     template_file_md5 = Digest::MD5.hexdigest(File.read(template_path))
     new_file_md5 = Digest::MD5.hexdigest(File.read(target_path))
@@ -32,8 +32,8 @@ describe Gemnasium do
   let(:error_output) { [] }
   let(:project_path) { File.expand_path("#{File.dirname(__FILE__)}../../tmp") }
   before do
-    Gemnasium.stub(:notify) { |arg| output << arg }
-    Gemnasium.stub(:quit_because_of) { |arg| error_output << arg && abort }
+    allow(Gemnasium).to receive(:notify) { |arg| output << arg }
+    allow(Gemnasium).to receive(:quit_because_of) { |arg| error_output << arg && abort }
     stub_config
     stub_requests
   end
@@ -43,7 +43,7 @@ describe Gemnasium do
     it_should_behave_like 'a command that requires a compatible config file'
 
     context 'on a non tracked branch' do
-      before { Gemnasium.stub(:current_branch).and_return('non_project_branch') }
+      before { allow(Gemnasium).to receive(:current_branch).and_return('non_project_branch') }
 
       it 'quit the program' do
         expect{ Gemnasium.push({ project_path: project_path }) }.to raise_error { |e|
@@ -58,8 +58,8 @@ describe Gemnasium do
                               { filename: 'modified_lockfile.lock', sha: 'lockfile_sha1_hash', content: 'stubbed lockfile content' }]}
 
         before do
-          Gemnasium::DependencyFiles.stub(:get_sha1s_hash).and_return(sha1_hash)
-          Gemnasium::DependencyFiles.stub(:get_content_to_upload).and_return(hash_to_upload)
+          allow(Gemnasium::DependencyFiles).to receive(:get_sha1s_hash).and_return(sha1_hash)
+          allow(Gemnasium::DependencyFiles).to receive(:get_content_to_upload).and_return(hash_to_upload)
         end
 
         it 'should not quit the program when :ignore_branch is true' do
@@ -69,7 +69,7 @@ describe Gemnasium do
     end
 
     context 'on the tracked branch' do
-      before { Gemnasium.stub(:current_branch).and_return('master') }
+      before { allow(Gemnasium).to receive(:current_branch).and_return('master') }
 
       context 'with no project slug' do
         before do
@@ -85,7 +85,7 @@ describe Gemnasium do
       end
 
       context 'with no supported dependency files found' do
-        before { Gemnasium::DependencyFiles.stub(:get_sha1s_hash).and_return([]) }
+        before { allow(Gemnasium::DependencyFiles).to receive(:get_sha1s_hash).and_return([]) }
 
         it 'quit the program with an error' do
           expect{ Gemnasium.push({ project_path: project_path }) }.to raise_error { |e|
@@ -97,7 +97,7 @@ describe Gemnasium do
 
       context 'with supported dependency files found' do
         let(:sha1_hash) {{ 'new_gemspec.gemspec' => 'gemspec_sha1_hash', 'modified_lockfile.lock' => 'lockfile_sha1_hash', 'Gemfile_unchanged.lock' => 'gemfile_sha1_hash' }}
-        before { Gemnasium::DependencyFiles.stub(:get_sha1s_hash).and_return(sha1_hash) }
+        before { allow(Gemnasium::DependencyFiles).to receive(:get_sha1s_hash).and_return(sha1_hash) }
 
         context 'for a gemnasium project already up-to-date' do
           before do
@@ -114,7 +114,7 @@ describe Gemnasium do
           let(:hash_to_upload) {[{ filename: 'new_gemspec.gemspec', sha: 'gemspec_sha1_hash', content: 'stubbed gemspec content' },
                                 { filename: 'modified_lockfile.lock', sha: 'lockfile_sha1_hash', content: 'stubbed lockfile content' }]}
           before do
-            Gemnasium::DependencyFiles.stub(:get_content_to_upload).and_return(hash_to_upload)
+            allow(Gemnasium::DependencyFiles).to receive(:get_content_to_upload).and_return(hash_to_upload)
             Gemnasium.push({ project_path: project_path })
           end
 
@@ -342,7 +342,7 @@ describe Gemnasium do
         after { FileUtils.rm "#{project_path}/.gitignore" }
 
         it 'creates the config folder' do
-          expect(File.exists? "#{project_path}/config").to be_true
+          expect(File.exists? "#{project_path}/config").to be_truthy
         end
 
         it 'informs the user that the folder has been created' do
@@ -448,7 +448,7 @@ describe Gemnasium do
           before { Gemnasium.install({ project_path: project_path, install_rake_task: true }) }
 
           it 'creates the /lib/tasks folder' do
-            expect(File.exists? "#{project_path}/lib/tasks").to be_true
+            expect(File.exists? "#{project_path}/lib/tasks").to be_truthy
           end
 
           it 'informs the user that the folder has been created' do

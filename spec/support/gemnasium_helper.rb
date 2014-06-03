@@ -7,20 +7,20 @@ end
 
 def stub_config(options = {})
   stubbed_config = double("Gemnasium::Configuration")
-  stubbed_config.stub(:site).and_return('gemnasium.com')
-  stubbed_config.stub(:use_ssl).and_return(true)
-  stubbed_config.stub(:api_key).and_return('test_api_key')
-  stubbed_config.stub(:api_version).and_return('v3')
-  stubbed_config.stub(:project_name).and_return(options.fetch(:project_name, 'gemnasium-gem'))
-  stubbed_config.stub(:project_slug).and_return(options.fetch(:project_slug, 'existing-slug'))
-  stubbed_config.stub(:project_branch).and_return('master')
-  stubbed_config.stub(:writable?).and_return(options.fetch(:writable?, true))
-  stubbed_config.stub(:store_value!).and_return(true)
-  stubbed_config.stub(:needs_to_migrate?).and_return(options.fetch(:needs_to_migrate?, false))
-  stubbed_config.stub(:migrate!).and_return(nil)
+  allow(stubbed_config).to receive(:site).and_return('gemnasium.com')
+  allow(stubbed_config).to receive(:use_ssl).and_return(true)
+  allow(stubbed_config).to receive(:api_key).and_return('test_api_key')
+  allow(stubbed_config).to receive(:api_version).and_return('v3')
+  allow(stubbed_config).to receive(:project_name).and_return(options.fetch(:project_name, 'gemnasium-gem'))
+  allow(stubbed_config).to receive(:project_slug).and_return(options.fetch(:project_slug, 'existing-slug'))
+  allow(stubbed_config).to receive(:project_branch).and_return('master')
+  allow(stubbed_config).to receive(:writable?).and_return(options.fetch(:writable?, true))
+  allow(stubbed_config).to receive(:store_value!).and_return(true)
+  allow(stubbed_config).to receive(:needs_to_migrate?).and_return(options.fetch(:needs_to_migrate?, false))
+  allow(stubbed_config).to receive(:migrate!).and_return(nil)
 
-  Gemnasium.stub(:config).and_return(stubbed_config)
-  Gemnasium.stub(:load_config).and_return(stubbed_config)
+  allow(Gemnasium).to receive(:config).and_return(stubbed_config)
+  allow(Gemnasium).to receive(:load_config).and_return(stubbed_config)
 end
 
 def stub_requests

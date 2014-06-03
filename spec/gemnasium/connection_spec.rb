@@ -9,7 +9,7 @@ describe Gemnasium::Connection do
 
   describe 'initialize' do
     it 'initializes a Net::HTTP object' do
-      connection.instance_variable_get('@connection').should be_kind_of(Net::HTTP)
+      expect(connection.instance_variable_get('@connection')).to be_kind_of(Net::HTTP)
     end
   end
 

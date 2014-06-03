@@ -14,7 +14,7 @@ describe Gemnasium::DependencyFiles do
     end
 
     context 'with a mathing regexp' do
-      before { Gemnasium.stub_chain(:config, :ignored_paths).and_return([]) }
+      before { allow(Gemnasium).to receive_message_chain(:config, :ignored_paths).and_return([]) }
       it 'returns a Hash of matching files and their git calculated hash' do
         sha1s_hash = Gemnasium::DependencyFiles.get_sha1s_hash(project_path)
 
@@ -27,7 +27,7 @@ describe Gemnasium::DependencyFiles do
 
       before do
         FileUtils.touch(subdir_file_path)
-        Gemnasium.stub_chain(:config, :ignored_paths).and_return([])
+        allow(Gemnasium).to receive_message_chain(:config, :ignored_paths).and_return([])
       end
       after  { File.delete(subdir_file_path) }
 
@@ -43,7 +43,7 @@ describe Gemnasium::DependencyFiles do
       end
 
       context 'which is ignored' do
-        before { Gemnasium.stub_chain(:config, :ignored_paths).and_return([/^tmp/, /[^\/]+\.lock/]) }
+        before { allow(Gemnasium).to receive_message_chain(:config, :ignored_paths).and_return([/^tmp/, /[^\/]+\.lock/]) }
 
         it 'returns a Hash of matching files without ignored ones' do
           sha1s_hash = Gemnasium::DependencyFiles.get_sha1s_hash(project_path)
