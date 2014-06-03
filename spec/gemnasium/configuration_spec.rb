@@ -69,6 +69,32 @@ describe Gemnasium::Configuration do
         it { expect(config.ignored_paths).to include Regexp.new("^[^\/]+\\.gemspec") }
       end
     end
+
+    context 'for a config file with parsable ERB code' do
+      before { write_config_file }
+      before { ENV['GEMNASIUM_API_KEY'] = 'api_key_from_env' }
+
+      let(:config_options) do
+        {
+          api_key: "<%= ENV['GEMNASIUM_API_KEY'] %>",
+          project_name: 'gemnasium-gem',
+          project_branch: 'master',
+          ignored_paths: ['spec/','tmp/*.lock', '*.gemspec']
+        }
+      end
+
+      it 'parses ERB code' do
+        expect(config.api_key).to eql 'api_key_from_env'
+      end
+
+      it 'keeps values unchanged if not ERB code' do
+        expect(config.project_name).to eql config_options[:project_name]
+        expect(config.project_branch).to eql config_options[:project_branch]
+        expect(config.ignored_paths).to include Regexp.new("^spec/")
+        expect(config.ignored_paths).to include Regexp.new("^tmp/[^/]+\\.lock")
+        expect(config.ignored_paths).to include Regexp.new("^[^\/]+\\.gemspec")
+      end
+    end
   end
 
   pending "writable?"

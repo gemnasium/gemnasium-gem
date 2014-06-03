@@ -1,4 +1,5 @@
 require 'yaml'
+require 'erb'
 
 module Gemnasium
   class Configuration
@@ -23,7 +24,7 @@ module Gemnasium
       end
       @path = config_file
 
-      config_hash = DEFAULT_CONFIG.merge(YAML.load_file(config_file))
+      config_hash = DEFAULT_CONFIG.merge(YAML.load(ERB.new(File.read(config_file)).result))
       config_hash.each do |k, v|
         writer_method = "#{k}="
         if respond_to?(writer_method)
