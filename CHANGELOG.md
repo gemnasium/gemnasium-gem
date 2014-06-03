@@ -1,8 +1,13 @@
-# 3.0.1 / 2013-02-11
+# 3.1.0 / 2014-06-03
+
+* [#10][] Add --ignore-branch option to the 'push' command
+* Parse ERB code in the configuration file
+
+# 3.0.1 / 2014-02-11
 
 * Add support for Python and PHP Composer dependency files
 
-# 3.0.0 / 2013-02-10
+# 3.0.0 / 2014-02-10
 
 **API V2 is now deprecated and all previous gem releases have been yanked**
 
