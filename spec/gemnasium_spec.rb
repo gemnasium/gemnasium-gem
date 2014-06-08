@@ -45,13 +45,6 @@ describe Gemnasium do
     context 'on a non tracked branch' do
       before { allow(Gemnasium).to receive(:current_branch).and_return('non_project_branch') }
 
-      it 'quit the program' do
-        expect{ Gemnasium.push({ project_path: project_path }) }.to raise_error { |e|
-          expect(e).to be_kind_of SystemExit
-          expect(error_output).to include "Dependency files updated but not on tracked branch (master), ignoring...\n"
-        }
-      end
-
       context 'with supported dependency files for gemnasium project not up-to-date' do
         let(:sha1_hash) {{ 'new_gemspec.gemspec' => 'gemspec_sha1_hash', 'modified_lockfile.lock' => 'lockfile_sha1_hash', 'Gemfile_unchanged.lock' => 'gemfile_sha1_hash' }}
         let(:hash_to_upload) {[{ filename: 'new_gemspec.gemspec', sha: 'gemspec_sha1_hash', content: 'stubbed gemspec content' },
@@ -62,8 +55,33 @@ describe Gemnasium do
           allow(Gemnasium::DependencyFiles).to receive(:get_content_to_upload).and_return(hash_to_upload)
         end
 
-        it 'should not quit the program when :ignore_branch is true' do
-          expect{ Gemnasium.push({ project_path: project_path, ignore_branch: true }) }.to_not raise_error
+        it 'quit the program with an error' do
+          expect{ Gemnasium.push({ project_path: project_path }) }.to raise_error { |e|
+            expect(e).to be_kind_of SystemExit
+            expect(error_output).to include 'Not on tracked branch (master)'
+          }
+        end
+
+        context "when :silence_branch is true" do
+          it "should not raise an error" do
+            expect{ Gemnasium.push({ project_path: project_path, silence_branch: true }) }.to_not raise_error
+          end
+
+          it 'should not contact Gemnasium' do
+            Gemnasium.push({ project_path: project_path, silence_branch: true })
+            expect(WebMock).to_not have_requested(:post, api_url('/api/v3/projects/existing-slug/dependency_files/compare'))
+          end
+        end
+
+        context "when :ignore_branch is true" do
+          it "should not raise an error" do
+            expect{ Gemnasium.push({ project_path: project_path, ignore_branch: true }) }.to_not raise_error
+          end
+
+          it 'should still contact Gemnasium' do
+            Gemnasium.push({ project_path: project_path, ignore_branch: true })
+            expect(WebMock).to have_requested(:post, api_url('/api/v3/projects/existing-slug/dependency_files/compare'))
+          end
         end
       end
     end

@@ -64,6 +64,10 @@ See `gemnasium COMMAND --help` for more information on a specific command.
             options[:ignore_branch] = true
           end
 
+          opts.on '-s', '--silence-branch', 'Silently ignore untracked branches' do
+            options[:silence_branch] = true
+          end
+
           opts.on '-h', '--help', 'Display this message' do
             options[:show_help] = true
           end

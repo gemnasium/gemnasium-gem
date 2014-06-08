@@ -97,11 +97,18 @@ describe Gemnasium::Options do
             expect(options).to eql({ command: 'push' })
           end
         end
-        
+
         context 'with ignore branch options' do
           it 'correctly set the options' do
             options, parser = Gemnasium::Options.parse ['push', '--ignore-branch']
             expect(options).to eql({ command: 'push', ignore_branch: true })
+          end
+        end
+
+        context 'with silence branch failure options' do
+          it 'correctly set the options' do
+            options, parser = Gemnasium::Options.parse ['push', '--silence-branch']
+            expect(options).to eql({ command: 'push', silence_branch: true })
           end
         end
       end

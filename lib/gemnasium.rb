@@ -15,11 +15,13 @@ module Gemnasium
       ensure_config_is_up_to_date!
 
       unless current_branch == @config.project_branch
-        message = "Dependency files updated but not on tracked branch (#{@config.project_branch}), ignoring...\n"
         if options[:ignore_branch]
-          notify message, :blue
+          notify "Not on tracked branch (#{@config.project_branch}), but ignore-branch option set to true. Continuing.\n", :blue
+        elsif options[:silence_branch]
+          notify "Not on tracked branch (#{@config.project_branch}). Exiting silently.\n", :blue
+          return
         else
-          quit_because_of(message)
+          quit_because_of("Not on tracked branch (#{@config.project_branch})")
         end
       end
 
