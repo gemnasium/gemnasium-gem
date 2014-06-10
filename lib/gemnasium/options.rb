@@ -60,7 +60,7 @@ See `gemnasium COMMAND --help` for more information on a specific command.
         'push'    => OptionParser.new do |opts|
           opts.banner = 'Usage: gemnasium push'
 
-          opts.on '--ignore-branch', 'Ignore untracked branches' do
+          opts.on '-i', '--ignore-branch', 'Push to gemnasium regardless of branch' do
             options[:ignore_branch] = true
           end
 
