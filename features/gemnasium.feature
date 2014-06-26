@@ -21,7 +21,7 @@ Feature: Help messages about gemnasium gem
     When I run `gemnasium <option>`
     Then the output should contain exactly:
       """
-      gemnasium v3.0.1\n
+      gemnasium v3.2.0\n
       """
     And the exit status should be 0
 
