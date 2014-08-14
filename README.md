@@ -10,7 +10,7 @@ Supported dependency files are:
 
 * Ruby: `Gemfile`, `Gemfile.lock` and `*.gemspec`
 * NPM: `package.json` and `npm-shrinkwrap.json`
-* Pyton: `requirements.txt`, `setup.py` and `requires.txt`
+* Python: `requirements.txt`, `setup.py` and `requires.txt`
 * PHP Composer: `composer.json` and `composer.lock`
 
 ## Installation
