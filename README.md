@@ -2,6 +2,8 @@
 [![Dependency Status](https://gemnasium.com/gemnasium/gemnasium-gem.png)](https://gemnasium.com/gemnasium/gemnasium-gem)
 [![Build Status](https://travis-ci.org/gemnasium/gemnasium-gem.png?branch=master)](https://travis-ci.org/gemnasium/gemnasium-gem)
 
+**Gemnasium gem has been deprecated. Please use the [Gemnasium Toolbelt](https://github.com/gemnasium/toolbelt) instead!**
+
 This gem lets you push your dependency files to [Gemnasium](https://gemnasium.com/) to track your project's dependencies and get notified about updates and security advisories.
 
 Gemnasium app offers Github integration with fully automated synchronization but you can use this gem if you don't want to authorize access to your repositories (ie: for privacy concern).
