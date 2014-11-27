@@ -3,7 +3,8 @@ require './lib/gemnasium/version'
 Gem::Specification.new do |gem|
   gem.authors       = ["Tech-Angels"]
   gem.email         = ["contact@tech-angels.com"]
-  gem.description   = "Safely upload your dependency files on gemnasium.com to track dependencies and get notified about updates and security advisories."
+  gem.description   = "Safely upload your dependency files on gemnasium.com to track dependencies and get notified about updates and security advisories." +
+    "WARNING! This gem has been deprecated and support will be discontinued. Please use Gemnasium Toolbelt (https://github.com/gemnasium/toolbelt) instead."
   gem.summary       = gem.description
   gem.homepage      = "https://gemnasium.com/"
   gem.license       = 'MIT'

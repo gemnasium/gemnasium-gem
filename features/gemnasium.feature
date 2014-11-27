@@ -21,7 +21,7 @@ Feature: Help messages about gemnasium gem
     When I run `gemnasium <option>`
     Then the output should contain exactly:
       """
-      gemnasium v3.2.0\n
+      gemnasium v3.2.1\n
       """
     And the exit status should be 0
 
@@ -45,7 +45,10 @@ Feature: Help messages about gemnasium gem
         migrate  :   Migrate the configuration file
         resolve  :   Resolve project name to an existing project on Gemnasium
 
-      See `gemnasium COMMAND --help` for more information on a specific command.\n
+      See `gemnasium COMMAND --help` for more information on a specific command.
+
+      WARNING! The gemnasium Rubygem has been deprecated.
+      Please use Gemnasium Toolbelt (https://github.com/gemnasium/toolbelt) instead.\n
       """
     And the exit status should be 0
 

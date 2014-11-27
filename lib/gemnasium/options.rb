@@ -31,6 +31,9 @@ Available commands are:
   resolve  :   Resolve project name to an existing project on Gemnasium
 
 See `gemnasium COMMAND --help` for more information on a specific command.
+
+WARNING! The gemnasium Rubygem has been deprecated.
+Please use Gemnasium Toolbelt (https://github.com/gemnasium/toolbelt) instead.
         HELP_MESSAGE
       end
 

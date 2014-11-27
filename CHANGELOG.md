@@ -1,4 +1,10 @@
+# 3.2.1 / 2014-11-27
+
+* Add deprecation warning
+
 # 3.2.0 / 2014-06-26
+
+* [#15][] Add --silence-branch option to the 'push' command
 
 * [#15][] Add --silence-branch option to the 'push' command
 
