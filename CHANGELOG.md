@@ -6,8 +6,6 @@
 
 * [#15][] Add --silence-branch option to the 'push' command
 
-* [#15][] Add --silence-branch option to the 'push' command
-
 # 3.1.0 / 2014-06-03
 
 * [#10][] Add --ignore-branch option to the 'push' command
